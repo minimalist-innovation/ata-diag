@@ -7,6 +7,8 @@ import html
 import logging
 import toml
 
+from datetime import datetime
+
 # Load and use Streamlit config
 def setup_logging():
     """Configure logging based on .streamlit/config.toml settings"""
@@ -142,15 +144,58 @@ css = """
         margin-bottom: 20px;
     }
     
-    .stButton button {
+    /* Custom styling for primary buttons */
+    .stButton button[kind="primary"] {
         background-color: #AD244A;
         color: white;
         border: none;
     }
-    .stButton button:hover {
+    .stButton button[kind="primary"]:hover {
         background-color: #8f1d3e;  /* Slightly darker shade for hover effect */
         color: white;
         border: none;
+    }
+    
+    /* Custom styling for secondary buttons */
+    .stButton button[kind="secondary"] {
+        background-color: #f0f2f6;  /* Use a light color for secondary */
+        color: #AD244A;
+        border: 1px solid #AD244A;
+    }
+    .stButton button[kind="secondary"]:hover {
+        background-color: #e5e7eb;  /* Slightly darker shade for hover effect */
+        color: #8f1d3e;
+        border: 1px solid #8f1d3e;
+    }
+    
+    /* Custom styling for primary link buttons */
+    .stLinkButton a[kind="primary"] {
+        background-color: #AD244A;
+        color: white;
+        border: none;
+        text-decoration: none;
+    }
+    
+    .stLinkButton a[kind="primary"]:hover {
+        background-color: #8f1d3e;  /* Slightly darker shade for hover effect */
+        color: white;
+        border: none;
+        text-decoration: none;
+    }
+    
+    /* Custom styling for secondary link buttons */
+    .stLinkButton a[kind="secondary"] {
+        background-color: #f0f2f6;  /* Use a light color for secondary */
+        color: #AD244A;
+        border: 1px solid #AD244A;
+        text-decoration: none;
+    }
+    
+    .stLinkButton a[kind="secondary"]:hover {
+        background-color: #e5e7eb;  /* Slightly darker shade for hover effect */
+        color: #8f1d3e;
+        border: 1px solid #8f1d3e;
+        text-decoration: none;
     }
     
     /* Success & Info messages */
@@ -176,6 +221,22 @@ css = """
         padding: 15px;
         border-radius: 4px;
         margin-bottom: 20px;
+    }
+
+    /* Footer styling */    
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #AD244A;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 0.8em;
+    }
+    .footer-spacer {
+        height: 40px;
     }
 
     /* Link styling */
@@ -553,17 +614,32 @@ def main():
                     logger.debug("Displaying Team pillar metrics")
                     display_metrics_for_pillar("Team", stage)
 
-                if st.button("Run Diagnostics"):
+                if st.button("Run Diagnostics", type="primary"):
                     logger.info("Run Diagnostics button clicked")
                     st.success("Diagnostic analysis complete!")
 
                 if st.link_button("Need Clarity? Call Now",
                                   "https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2",
-                                  type="secondary"):
+                                  type="secondary",
+                                  icon="📞"):
                     logger.info("Getting support!")
-                    st.success("Diagnostic analysis complete!")
 
         st.markdown("</div>", unsafe_allow_html=True)
+
+        # Horizontal line
+        st.markdown("---")
+
+        # Copyright footer with dynamically generated year
+        # Add a spacer to prevent content from being hidden behind the fixed footer
+        st.markdown("<div class='footer-spacer'></div>", unsafe_allow_html=True)
+
+        # Copyright footer with dynamically generated year
+        current_year = datetime.now().year
+        st.markdown(f"""
+        <div class="footer">
+            © {current_year} Minimalist Innovation LLC. All rights reserved.
+        </div>
+        """, unsafe_allow_html=True)
         logger.info("App rendered successfully")
 
     except Exception as e:
