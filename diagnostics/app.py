@@ -1,10 +1,5 @@
 import os
 import sys
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import base64
 import sqlite3
 import importlib.util
 import streamlit as st
@@ -12,6 +7,7 @@ import html
 import logging
 import toml
 
+from datetime import datetime
 
 # Load and use Streamlit config
 def setup_logging():
@@ -131,8 +127,13 @@ css = """
 
     /* Headers styling with Montserrat font */
     h1, h2, h3, h4, h5, h6 {
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Montserrat', sans-serif !important;;
         font-weight: 600;
+    }
+    
+    /* Apply Open Sans to body text */
+    body, p, div, span, li, td, th, button {
+        font-family: 'Open Sans', sans-serif !important;
     }
 
     /* Custom container styling */
@@ -142,7 +143,61 @@ css = """
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         margin-bottom: 20px;
     }
-
+    
+    /* Custom styling for primary buttons */
+    .stButton button[kind="primary"] {
+        background-color: #AD244A;
+        color: white;
+        border: none;
+    }
+    .stButton button[kind="primary"]:hover {
+        background-color: #8f1d3e;  /* Slightly darker shade for hover effect */
+        color: white;
+        border: none;
+    }
+    
+    /* Custom styling for secondary buttons */
+    .stButton button[kind="secondary"] {
+        background-color: #f0f2f6;  /* Use a light color for secondary */
+        color: #AD244A;
+        border: 1px solid #AD244A;
+    }
+    .stButton button[kind="secondary"]:hover {
+        background-color: #e5e7eb;  /* Slightly darker shade for hover effect */
+        color: #8f1d3e;
+        border: 1px solid #8f1d3e;
+    }
+    
+    /* Custom styling for primary link buttons */
+    .stLinkButton a[kind="primary"] {
+        background-color: #AD244A;
+        color: white;
+        border: none;
+        text-decoration: none;
+    }
+    
+    .stLinkButton a[kind="primary"]:hover {
+        background-color: #8f1d3e;  /* Slightly darker shade for hover effect */
+        color: white;
+        border: none;
+        text-decoration: none;
+    }
+    
+    /* Custom styling for secondary link buttons */
+    .stLinkButton a[kind="secondary"] {
+        background-color: #f0f2f6;  /* Use a light color for secondary */
+        color: #AD244A;
+        border: 1px solid #AD244A;
+        text-decoration: none;
+    }
+    
+    .stLinkButton a[kind="secondary"]:hover {
+        background-color: #e5e7eb;  /* Slightly darker shade for hover effect */
+        color: #8f1d3e;
+        border: 1px solid #8f1d3e;
+        text-decoration: none;
+    }
+    
     /* Success & Info messages */
     .success {
         background-color: rgba(56, 84, 36, 0.1);
@@ -168,6 +223,22 @@ css = """
         margin-bottom: 20px;
     }
 
+    /* Footer styling */    
+    .footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        background-color: #AD244A;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-size: 0.8em;
+    }
+    .footer-spacer {
+        height: 40px;
+    }
+
     /* Link styling */
     a {
         color: #00A8A8 !important;
@@ -187,24 +258,40 @@ st.markdown(css, unsafe_allow_html=True)
 # === Helper Functions ===
 def add_logo():
     try:
-        # Create a simple logo using text and styling
-        logo_html = f"""
-        <div style="display: flex; align-items: center; margin-bottom: 24px;">
-            <div style="background-color: {primary_color}; width: 40px; height: 40px; border-radius: 8px; 
-                      display: flex; justify-content: center; align-items: center; margin-right: 12px;">
-                <span style="color: white; font-weight: bold; font-size: 18px;">ATA</span>
+        # Create a container with two columns
+        col1, col2 = st.columns([3, 1])
+
+        with col1:
+            # Left side: App logo (existing)
+            app_logo_html = f"""
+            <div style="display: flex; align-items: center;">
+                <div style="background-color: {primary_color}; width: 40px; height: 40px; border-radius: 8px; 
+                          display: flex; justify-content: center; align-items: center; margin-right: 12px;">
+                    <span style="color: white; font-weight: bold; font-size: 18px;">ATA</span>
+                </div>
+                <div>
+                    <h2 style="margin: 0; padding: 0; color: {primary_color};">Adaptive Traction Architecture</h2>
+                    <p style="margin: 0; padding: 0; font-size: 14px; color: {secondary_color};"> Diagnostics</p>
+                </div>
             </div>
-            <div>
-                <h2 style="margin: 0; padding: 0; color: {primary_color};">Adaptive Traction Architecture</h2>
-                <p style="margin: 0; padding: 0; font-size: 14px; color: {secondary_color};"> Diagnostics</p>
-            </div>
-        </div>
-        """
-        st.markdown(logo_html, unsafe_allow_html=True)
-        logger.debug("Logo rendered successfully")
+            """
+            st.markdown(app_logo_html, unsafe_allow_html=True)
+
+        with col2:
+            # Right side: Company logo using st.image
+            import os
+            from PIL import Image
+
+            # Path to your SVG logo
+            logo_path = os.path.join("media", "Minimalist_Horizontal_Blue.svg")
+
+            # Display the logo - align it to the right
+            st.image(logo_path, width=200)  # Adjust width as needed
+
+        logger.debug("Logos rendered successfully")
     except Exception as e:
-        logger.error(f"Error displaying logo: {str(e)}")
-        st.error(f"Error displaying logo: {str(e)}")
+        logger.error(f"Error displaying logos: {str(e)}")
+        st.error(f"Error displaying logos: {str(e)}")
 
 
 def import_and_setup_database():
@@ -527,11 +614,32 @@ def main():
                     logger.debug("Displaying Team pillar metrics")
                     display_metrics_for_pillar("Team", stage)
 
-                if st.button("Run Diagnostics"):
+                if st.button("Run Diagnostics", type="primary"):
                     logger.info("Run Diagnostics button clicked")
                     st.success("Diagnostic analysis complete!")
 
+                if st.link_button("Need Clarity? Call Now",
+                                  "https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2",
+                                  type="secondary",
+                                  icon="📞"):
+                    logger.info("Getting support!")
+
         st.markdown("</div>", unsafe_allow_html=True)
+
+        # Horizontal line
+        st.markdown("---")
+
+        # Copyright footer with dynamically generated year
+        # Add a spacer to prevent content from being hidden behind the fixed footer
+        st.markdown("<div class='footer-spacer'></div>", unsafe_allow_html=True)
+
+        # Copyright footer with dynamically generated year
+        current_year = datetime.now().year
+        st.markdown(f"""
+        <div class="footer">
+            © {current_year} Minimalist Innovation LLC. All rights reserved.
+        </div>
+        """, unsafe_allow_html=True)
         logger.info("App rendered successfully")
 
     except Exception as e:
