@@ -26,14 +26,33 @@ def create_growth_stages_table():
 
         # Create the growth_stages table
         cursor.execute('''
-        CREATE TABLE IF NOT EXISTS growth_stages (
-            id INTEGER PRIMARY KEY,
-            growth_stage_name TEXT NOT NULL,
-            description TEXT NOT NULL,
-            low_range DECIMAL(10,2) NOT NULL,
-            high_range DECIMAL(10,2) NOT NULL
-        )
-        ''')
+                       CREATE TABLE IF NOT EXISTS growth_stages
+                       (
+                           id
+                           INTEGER
+                           PRIMARY
+                           KEY,
+                           growth_stage_name
+                           TEXT
+                           NOT
+                           NULL,
+                           description
+                           TEXT
+                           NOT
+                           NULL,
+                           low_range
+                           DECIMAL
+                       (
+                           10,
+                           2
+                       ) NOT NULL,
+                           high_range DECIMAL
+                       (
+                           10,
+                           2
+                       ) NOT NULL
+                           )
+                       ''')
 
         # Clear existing data to avoid duplicates if we run this script multiple times
         cursor.execute('DELETE FROM growth_stages')
@@ -88,25 +107,59 @@ def create_architecture_problems_table():
 
         # Create the architecture_problems table
         cursor.execute('''
-        CREATE TABLE IF NOT EXISTS architecture_problems (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            architecture_pillar TEXT NOT NULL,       -- Business/Revenue, Product, Systems, Team
-            growth_stage_name TEXT NOT NULL,         -- Aligned with growth_stages table (e.g., Validation Seekers)
-            problem_description TEXT NOT NULL,       -- Description of the problem
-            metric_name TEXT NOT NULL,               -- Name of the metric to measure
-            low_range DECIMAL(10,2),                -- Lower threshold value
-            hi_range DECIMAL(10,2),                 -- Upper threshold value
-            min_range DECIMAL(10,2),                -- Minimum possible value for this metric
-            max_range DECIMAL(10,2),                -- Maximum possible value for this metric
-            units TEXT NOT NULL                     -- Percentage, Days, Ratio, etc.
-        )
-        ''')
+                       CREATE TABLE IF NOT EXISTS architecture_problems
+                       (
+                           id
+                           INTEGER
+                           PRIMARY
+                           KEY
+                           AUTOINCREMENT,
+                           architecture_pillar
+                           TEXT
+                           NOT
+                           NULL, -- Business/Revenue, Product, Systems, Team
+                           growth_stage_name
+                           TEXT
+                           NOT
+                           NULL, -- Aligned with growth_stages table (e.g., Validation Seekers)
+                           problem_description
+                           TEXT
+                           NOT
+                           NULL, -- Description of the problem
+                           metric_name
+                           TEXT
+                           NOT
+                           NULL, -- Name of the metric to measure
+                           low_range
+                           DECIMAL
+                       (
+                           10,
+                           2
+                       ), -- Lower threshold value
+                           hi_range DECIMAL
+                       (
+                           10,
+                           2
+                       ), -- Upper threshold value
+                           min_range DECIMAL
+                       (
+                           10,
+                           2
+                       ), -- Minimum possible value for this metric
+                           max_range DECIMAL
+                       (
+                           10,
+                           2
+                       ), -- Maximum possible value for this metric
+                           units TEXT NOT NULL -- Percentage, Days, Ratio, etc.
+                           )
+                       ''')
 
         # Create an index for faster lookups by pillar and growth stage
         cursor.execute('''
-        CREATE INDEX IF NOT EXISTS idx_pillar_stage 
-        ON architecture_problems (architecture_pillar, growth_stage_name)
-        ''')
+                       CREATE INDEX IF NOT EXISTS idx_pillar_stage
+                           ON architecture_problems (architecture_pillar, growth_stage_name)
+                       ''')
 
         # Check if table already has data
         cursor.execute("SELECT COUNT(*) FROM architecture_problems")
@@ -434,11 +487,11 @@ def create_architecture_problems_table():
 
         # Insert the data
         cursor.executemany('''
-        INSERT INTO architecture_problems 
-        (architecture_pillar, growth_stage_name, problem_description, 
-         metric_name, low_range, hi_range, min_range, max_range, units)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', problems_data)
+                           INSERT INTO architecture_problems
+                           (architecture_pillar, growth_stage_name, problem_description,
+                            metric_name, low_range, hi_range, min_range, max_range, units)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                           ''', problems_data)
 
         logger.info(f"Inserted {len(problems_data)} architecture problems")
 
@@ -468,9 +521,11 @@ def query_problems_by_pillar_and_stage(pillar, stage_name):
         cursor = conn.cursor()
 
         cursor.execute('''
-        SELECT * FROM architecture_problems 
-        WHERE architecture_pillar = ? AND growth_stage_name = ?
-        ''', (pillar, stage_name))
+                       SELECT *
+                       FROM architecture_problems
+                       WHERE architecture_pillar = ?
+                         AND growth_stage_name = ?
+                       ''', (pillar, stage_name))
 
         results = [dict(row) for row in cursor.fetchall()]
         conn.close()
@@ -491,7 +546,7 @@ def setup_database():
         logger.info("Database setup completed successfully")
         # For Streamlit integration, log a message in the UI as well
         if runtime.exists():
-            st.success("Database setup completed successfully")
+            logger.info("Database setup completed successfully")
     except Exception as e:
         logger.error(f"Database setup failed: {str(e)}")
         # For Streamlit integration, show error in the UI as well

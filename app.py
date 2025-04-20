@@ -3,11 +3,13 @@ import sys
 import sqlite3
 import importlib.util
 import streamlit as st
+import streamlit.components.v1 as components
 import html
 import logging
 import toml
 
 from datetime import datetime
+
 
 # Load and use Streamlit config
 def setup_logging():
@@ -119,140 +121,44 @@ except Exception as e:
     highlight_color = "#AC2147"  # Red highlight
     link_color = "#00A8A8"  # Teal for hyperlinks
 
-# Custom CSS for styling - this complements the config.toml settings
-css = """
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
-    /* Headers styling with Montserrat font */
-    h1, h2, h3, h4, h5, h6 {
-        font-family: 'Montserrat', sans-serif !important;;
-        font-weight: 600;
-    }
-    
-    /* Apply Open Sans to body text */
-    body, p, div, span, li, td, th, button {
-        font-family: 'Open Sans', sans-serif !important;
-    }
+# Load CSS Dynamically
+def load_css(file_path):
+    with open(file_path) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-    /* Custom container styling */
-    .dashboard-container {
-        border-radius: 8px;
-        padding: 24px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-    }
-    
-    /* Custom styling for primary buttons */
-    .stButton button[kind="primary"] {
-        background-color: #AD244A;
-        color: white;
-        border: none;
-    }
-    .stButton button[kind="primary"]:hover {
-        background-color: #8f1d3e;  /* Slightly darker shade for hover effect */
-        color: white;
-        border: none;
-    }
-    
-    /* Custom styling for secondary buttons */
-    .stButton button[kind="secondary"] {
-        background-color: #f0f2f6;  /* Use a light color for secondary */
-        color: #AD244A;
-        border: 1px solid #AD244A;
-    }
-    .stButton button[kind="secondary"]:hover {
-        background-color: #e5e7eb;  /* Slightly darker shade for hover effect */
-        color: #8f1d3e;
-        border: 1px solid #8f1d3e;
-    }
-    
-    /* Custom styling for primary link buttons */
-    .stLinkButton a[kind="primary"] {
-        background-color: #AD244A;
-        color: white;
-        border: none;
-        text-decoration: none;
-    }
-    
-    .stLinkButton a[kind="primary"]:hover {
-        background-color: #8f1d3e;  /* Slightly darker shade for hover effect */
-        color: white;
-        border: none;
-        text-decoration: none;
-    }
-    
-    /* Custom styling for secondary link buttons */
-    .stLinkButton a[kind="secondary"] {
-        background-color: #f0f2f6;  /* Use a light color for secondary */
-        color: #AD244A;
-        border: 1px solid #AD244A;
-        text-decoration: none;
-    }
-    
-    .stLinkButton a[kind="secondary"]:hover {
-        background-color: #e5e7eb;  /* Slightly darker shade for hover effect */
-        color: #8f1d3e;
-        border: 1px solid #8f1d3e;
-        text-decoration: none;
-    }
-    
-    /* Success & Info messages */
-    .success {
-        background-color: rgba(56, 84, 36, 0.1);
-        border-left: 4px solid #385424;
-        padding: 15px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-    }
 
-    .info {
-        background-color: rgba(38, 97, 156, 0.1);
-        border-left: 4px solid #26619C;
-        padding: 15px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-    }
+# Load Javascript dynamically
+def load_js(file_path):
+    with open(file_path) as f:
+        js_code = f.read()
+        components.html(f"<script>{js_code}</script>", height=0)
 
-    .error {
-        background-color: rgba(172, 33, 71, 0.1);
-        border-left: 4px solid #AC2147;
-        padding: 15px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-    }
 
-    /* Footer styling */    
-    .footer {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: #AD244A;
-        color: white;
-        text-align: center;
-        padding: 10px;
-        font-size: 0.8em;
-    }
-    .footer-spacer {
-        height: 40px;
-    }
+def add_toolbar():
+    st.markdown("""
+    <style>
+        /* Hide Streamlit's default header and menu */
+        header, #MainMenu, footer {visibility: hidden;}
+    
+        /* Remove top margin/padding */
+        .block-container { padding-top: 0 !important; margin-top: 0 !important; }
+        .css-18e3th9 { padding-top: 0 !important; } /* Sometimes needed for newer Streamlit */
+    </style>
+    """, unsafe_allow_html=True)
 
-    /* Link styling */
-    a {
-        color: #00A8A8 !important;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-</style>
-"""
-
-# Apply CSS
-st.markdown(css, unsafe_allow_html=True)
+    app_toolbar_html = f"""
+    <div class="top-toolbar">
+        <span class="toolbar-text">Need Clarity?</span>
+        <a href="https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2" 
+            class="toolbar-cta" 
+            target="_blank">
+            🤙Call Now
+        </a>
+    </div>
+    <div class="toolbar-spacer"></div>
+    """
+    st.markdown(app_toolbar_html, unsafe_allow_html=True)
 
 
 # === Helper Functions ===
@@ -271,7 +177,7 @@ def add_logo():
                 </div>
                 <div>
                     <h2 style="margin: 0; padding: 0; color: {primary_color};">Adaptive Traction Architecture</h2>
-                    <p style="margin: 0; padding: 0; font-size: 14px; color: {secondary_color};"> Diagnostics</p>
+                    <h3 style="margin: 0; padding: 0; color: {primary_color};"> Diagnostics</h3>
                 </div>
             </div>
             """
@@ -387,9 +293,11 @@ def query_problems_by_pillar_and_stage(pillar, stage_name):
         cursor = conn.cursor()
 
         cursor.execute('''
-        SELECT * FROM architecture_problems 
-        WHERE architecture_pillar = ? AND growth_stage_name = ?
-        ''', (pillar, stage_name))
+                       SELECT *
+                       FROM architecture_problems
+                       WHERE architecture_pillar = ?
+                         AND growth_stage_name = ?
+                       ''', (pillar, stage_name))
 
         results = [dict(row) for row in cursor.fetchall()]
         logger.debug(f"Found {len(results)} problems for {pillar} in {stage_name}")
@@ -500,25 +408,16 @@ def display_metrics_for_pillar(pillar, growth_stage):
 # === App Layout ===
 def main():
     try:
-        logger.info("Starting Adaptive Traction Architecture Diagnostics app")
+        logger.debug("Starting Adaptive Traction Architecture Diagnostics app")
 
+        # Load all the assets
+        load_css("static/styles.css")
+        load_js("static/script.js")
+
+        # Add the toolbar
+        add_toolbar()
         # Add logo
         add_logo()
-
-        # About Adaptive Traction Architecture
-        st.markdown("<div class='dashboard-container'>", unsafe_allow_html=True)
-
-        about_markdown = """
-        ### About Adaptive Traction Architecture
-
-        Adaptive Traction Architecture™ is a comprehensive framework designed for B2C and B2B2C SaaS startups making \\$1M - \\$10M ARR that face specific growth challenges. It builds four key pillars that work together to help startups maintain momentum through market shifts: Products That Adapt, Business Models That Work, Teams That Respond, and Systems That Scale. This architectural approach enables startups to detect and respond to market changes without losing traction.
-
-        ### About the Diagnostics Framework
-
-        The Adaptive Traction Architecture Diagnostics tool is a powerful assessment platform that shows what's really holding your business back. It provides a clear view of your startup's health across 10 key areas including Product-Market Fit, Retention, Acquisition, and more. The framework helps you identify what's driving growth, what's slowing you down, and which bets are worth making next, enabling smarter, data-driven decisions.
-        """
-        st.markdown(about_markdown)
-        st.markdown("</div>", unsafe_allow_html=True)
 
         # Basic interactivity for demo purposes
         st.markdown("<div class='dashboard-container'>", unsafe_allow_html=True)
@@ -617,12 +516,6 @@ def main():
                 if st.button("Run Diagnostics", type="primary"):
                     logger.info("Run Diagnostics button clicked")
                     st.success("Diagnostic analysis complete!")
-
-                if st.link_button("Need Clarity? Call Now",
-                                  "https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2",
-                                  type="secondary",
-                                  icon="📞"):
-                    logger.info("Getting support!")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
