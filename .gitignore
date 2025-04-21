@@ -173,6 +173,11 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+# MAC
 .DS_Store
 
+# Intellij
+.idea
+
+# Local Database
 data
