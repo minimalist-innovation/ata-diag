@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+/* Headers styling with Montserrat font */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 600;
+}
+
+/* Apply Open Sans to body text */
+body, p, div, span, li, td, th, button {
+    font-size: 16px !important;
+    line-height: 1.6em !important;
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+/* Custom container styling */
+.dashboard-container {
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+/* Main container constraints */
+.stApp {
+    max-width: 1600px !important;
+    margin: 0 auto !important;
+    padding: 2rem 1rem !important;
+}
+
+/* Ensure child elements respect container */
+.stApp > div {
+    max-width: 100% !important;
+}
+
+/* === DRY: Shared Primary Button Styles === */
+/* Shared pill button style for primary buttons and link buttons */
+.stButton > button[kind="primary"],
+.stLinkButton a[kind="primary"] {
+    background-color: #AD244A;
+    color: white !important;
+    border: none;
+    border-radius: 999em !important;
+    font-family: 'Open Sans', sans-serif !important;
+    font-size: 16px !important;
+    font-weight: 600;
+    padding: 0.75em 2.5em; /* Extra horizontal space for icon and text */
+    line-height: 1.6em;
+    display: inline-flex; /* Use flex for icon + text alignment */
+    align-items: center; /* Vertically center icon and text */
+    justify-content: center;
+    min-width: 240px; /* Ensures button is long enough for most texts */
+    max-width: 100%; /* Responsive: button won't overflow container */
+    text-align: center;
+    text-decoration: none !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+    gap: 0.75em; /* Space between icon and text */
+    white-space: normal; /* Allow text to wrap if needed */
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+/* === DRY: Shared Primary Button Hover Styles === */
+.stButton > button[kind="primary"]:hover,
+.stLinkButton a[kind="primary"]:hover {
+    background-color: #8f1d3e;
+    color: white !important;
+    border: none;
+    text-decoration: none !important;
+}
+
+/* Custom styling for secondary buttons */
+.stButton button[kind="secondary"] {
+    background-color: #f0f2f6;
+    color: #AD244A;
+    border: 1px solid #AD244A;
+}
+
+.stButton button[kind="secondary"]:hover {
+    background-color: #e5e7eb;
+    color: #8f1d3e;
+    border: 1px solid #8f1d3e;
+}
+
+/* Custom styling for secondary link buttons */
+.stLinkButton a[kind="secondary"] {
+    background-color: #f0f2f6;
+    color: #AD244A;
+    border: 1px solid #AD244A;
+    text-decoration: none;
+}
+
+.stLinkButton a[kind="secondary"]:hover {
+    background-color: #e5e7eb;
+    color: #8f1d3e;
+    border: 1px solid #8f1d3e;
+    text-decoration: none;
+}
+
+/* Success & Info messages */
+.success {
+    background-color: rgba(56, 84, 36, 0.1);
+    border-left: 4px solid #385424;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.info {
+    background-color: rgba(38, 97, 156, 0.1);
+    border-left: 4px solid #26619C;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.error {
+    background-color: rgba(172, 33, 71, 0.1);
+    border-left: 4px solid #AC2147;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Footer styling */
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #AD244A;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.8em;
+}
+
+.footer-spacer {
+    height: 40px;
+}
+
+/* Remove Streamlit's default padding/margin at the top */
+.block-container {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Top toolbar */
+.top-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    background: #AD244A;
+    color: white;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* <-- This moves CTA to the right */
+    padding: 0.6em 1.5em;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    font-family: 'Open Sans', sans-serif;
+    gap: 1.5em;
+}
+
+.toolbar-text {
+    font-size: 1.1em;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.toolbar-cta {
+    background: white;
+    color: #AD244A !important;
+    border-radius: 999em;
+    padding: 0.5em 1.5em;
+    font-size: 1em;
+    font-weight: 600;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.toolbar-cta:hover {
+    background: #f0f2f6;
+    color: #8f1d3e !important;
+}
+
+.toolbar-spacer {
+    height: 54px; /* Adjust to match .top-toolbar height */
+}
+
+/* Link styling */
+a {
+    color: #00A8A8 !important;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1600px) {
+    .stApp {
+        padding: 1.5rem !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        font-size: 14px !important;
+    }
+}
