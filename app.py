@@ -459,7 +459,7 @@ def display_metrics_for_pillar(pillar, growth_stage):
         st.markdown(f"{problem_description}")
 
         # Create a unique key for each slider
-        slider_key = f"{pillar}_{problem['id']}_{problem['metric_name']}"
+        slider_key = f"{pillar}_{growth_stage}_{problem['id']}_{problem['metric_name']}"
 
         # Get appropriate format and range for this metric
         slider_format = get_slider_format(problem['metric_name'])
@@ -495,6 +495,40 @@ def display_metrics_for_pillar(pillar, growth_stage):
         )
 
         st.markdown("---")
+
+
+def save_architecture_problems_metrics_input():
+    """Save architecture problems metrics inputs to database"""
+    metrics_data = []
+
+    # Iterating widget data from session state and creating metrics_data from it
+    for key, value in st.session_state.items():
+        metric_data = []
+
+        # spliting widget key to get the metric names
+        for name in key.split("_"):
+            if not name.isdigit():
+                metric_data.append(name)
+        
+        metric_data.append(value)
+        metrics_data.append(metric_data)
+
+        # Connect to the database (creates it if it doesn't exist)
+        conn = sqlite3.connect('data/traction_diagnostics.db')
+        cursor = conn.cursor()
+        
+        for metric_info in metrics_data:
+            cursor.execute('''
+                INSERT INTO architecture_problems_metrics_input
+                (architecture_pillar, growth_stage_name, metric_name, metric_value) 
+                VALUES (?, ?, ?, ?)
+                ''' , (metric_info[0],metric_info[1],metric_info[2],metric_info[3]) ) 
+
+        # Commit changes and close connection
+        conn.commit()
+        conn.close()
+        
+    logger.info(f"Inserted {len(metrics_data)} rows into architecture_problems_metrics_input succefully ")       
 
 
 # === App Layout ===
@@ -614,9 +648,12 @@ def main():
                     logger.debug("Displaying Team pillar metrics")
                     display_metrics_for_pillar("Team", stage)
 
+                # Save user metrics input to database
                 if st.button("Run Diagnostics", type="primary"):
+                    save_architecture_problems_metrics_input()
                     logger.info("Run Diagnostics button clicked")
                     st.success("Diagnostic analysis complete!")
+
 
                 if st.link_button("Need Clarity? Call Now",
                                   "https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2",
