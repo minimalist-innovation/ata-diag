@@ -153,7 +153,7 @@ def add_toolbar():
         <a href="https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2" 
             class="toolbar-cta" 
             target="_blank">
-            🤙Call Now
+            🤙Schedule a Call Now
         </a>
     </div>
     <div class="toolbar-spacer"></div>
@@ -421,7 +421,6 @@ def main():
 
         # Basic interactivity for demo purposes
         st.markdown("<div class='dashboard-container'>", unsafe_allow_html=True)
-        st.markdown("<h3>Start Your Diagnostics</h3>", unsafe_allow_html=True)
 
         # Ask for company existence duration
         months_existed = st.number_input("How long has your company been in existence? (months)",
@@ -512,6 +511,16 @@ def main():
 
                     logger.debug("Displaying Team pillar metrics")
                     display_metrics_for_pillar("Team", stage)
+
+                disclaimer_text = f"""
+                This tool is provided for informational and experimental purposes only and is provided 'as is' without warranties of any kind.
+                Do not rely solely on the results for business decisions. Always consult with a qualified expert before taking action based on these diagnostics.
+                Use of this tool is at your own risk.
+                """
+                st.warning(
+                    disclaimer_text,
+                    icon="⚠️"
+                )
 
                 if st.button("Run Diagnostics", type="primary"):
                     logger.info("Run Diagnostics button clicked")
