@@ -12,6 +12,193 @@ logging.basicConfig(
 )
 
 
+def create_saas_types_table():
+    """Create SaaS types table with static keys."""
+    saas_types = [
+        (1, "B2C"),
+        (2, "B2B2C"),
+    ]
+    conn = sqlite3.connect('data/traction_diagnostics.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+                   CREATE TABLE IF NOT EXISTS saas_types
+                   (
+                       id
+                       INTEGER
+                       PRIMARY
+                       KEY,
+                       type_name
+                       TEXT
+                       NOT
+                       NULL
+                       UNIQUE
+                   )
+                   ''')
+    cursor.executemany('INSERT OR IGNORE INTO saas_types (id, type_name) VALUES (?, ?)', saas_types)
+    conn.commit()
+    conn.close()
+
+
+def create_orientations_table():
+    """Create orientations table with static keys."""
+    orientations = [
+        (1, "Horizontal"),
+        (2, "Vertical"),
+    ]
+    conn = sqlite3.connect('data/traction_diagnostics.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+                   CREATE TABLE IF NOT EXISTS orientations
+                   (
+                       id
+                       INTEGER
+                       PRIMARY
+                       KEY,
+                       orientation_name
+                       TEXT
+                       NOT
+                       NULL
+                       UNIQUE
+                   )
+                   ''')
+    cursor.executemany('INSERT OR IGNORE INTO orientations (id, orientation_name) VALUES (?, ?)', orientations)
+    conn.commit()
+    conn.close()
+
+
+def create_industries_table():
+    """Create industries table with static keys."""
+    industries = [
+        (1, "Healthcare"),
+        (2, "Financial Services"),
+        (3, "Retail/E-commerce"),
+        (4, "Manufacturing"),
+        (5, "Construction"),
+        (6, "Logistics/Supply Chain"),
+        (7, "Insurance"),
+        (8, "Hospitality"),
+        (9, "Education"),
+        (10, "Real Estate"),
+        (99, "Other"),
+    ]
+    conn = sqlite3.connect('data/traction_diagnostics.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+                   CREATE TABLE IF NOT EXISTS industries
+                   (
+                       id
+                       INTEGER
+                       PRIMARY
+                       KEY,
+                       industry_name
+                       TEXT
+                       NOT
+                       NULL
+                       UNIQUE
+                   )
+                   ''')
+    cursor.executemany('INSERT OR IGNORE INTO industries (id, industry_name) VALUES (?, ?)', industries)
+    conn.commit()
+    conn.close()
+
+
+def create_industry_mappings_table():
+    """Create industry mappings table with static foreign keys."""
+    try:
+        conn = sqlite3.connect('data/traction_diagnostics.db')
+        cursor = conn.cursor()
+
+        # Create industry mappings table with composite primary key
+        cursor.execute('''
+                       CREATE TABLE IF NOT EXISTS industry_mappings
+                       (
+                           saas_type_id
+                           INTEGER
+                           NOT
+                           NULL,
+                           orientation_id
+                           INTEGER
+                           NOT
+                           NULL,
+                           industry_id
+                           INTEGER
+                           NOT
+                           NULL,
+                           PRIMARY
+                           KEY
+                       (
+                           saas_type_id,
+                           orientation_id,
+                           industry_id
+                       ),
+                           FOREIGN KEY
+                       (
+                           saas_type_id
+                       ) REFERENCES saas_types
+                       (
+                           id
+                       ),
+                           FOREIGN KEY
+                       (
+                           orientation_id
+                       ) REFERENCES orientations
+                       (
+                           id
+                       ),
+                           FOREIGN KEY
+                       (
+                           industry_id
+                       ) REFERENCES industries
+                       (
+                           id
+                       )
+                           )
+                       ''')
+
+        # Define valid industry mappings using static IDs
+        industry_mappings = [
+            # B2C Vertical Mappings (saas_type_id=1, orientation_id=2)
+            (1, 2, 1),  # Healthcare
+            (1, 2, 2),  # Financial Services
+            (1, 2, 3),  # Retail/E-commerce
+            (1, 2, 9),  # Education
+
+            # B2C Horizontal Mappings (saas_type_id=1, orientation_id=1)
+            (1, 1, 4),  # Manufacturing
+            (1, 1, 5),  # Construction
+            (1, 1, 6),  # Logistics/Supply Chain
+
+            # B2B2C Vertical Mappings (saas_type_id=2, orientation_id=2)
+            (2, 2, 7),  # Insurance
+            (2, 2, 8),  # Hospitality
+            (2, 2, 10),  # Real Estate
+
+            # B2B2C Horizontal Mappings (saas_type_id=2, orientation_id=1)
+            (2, 1, 1),  # Healthcare
+            (2, 1, 2),  # Financial Services
+            (2, 1, 99)  # Other
+        ]
+
+        # Insert mappings if table is empty
+        cursor.execute("SELECT COUNT(*) FROM industry_mappings")
+        if cursor.fetchone()[0] == 0:
+            cursor.executemany('''
+                               INSERT
+                               OR IGNORE INTO industry_mappings 
+                (saas_type_id, orientation_id, industry_id)
+                VALUES (?, ?, ?)
+                               ''', industry_mappings)
+            logger.info(f"Inserted {len(industry_mappings)} industry mappings")
+
+        conn.commit()
+        conn.close()
+        logger.info("Industry mappings table created successfully")
+
+    except Exception as e:
+        logger.error(f"Error creating industry mappings: {str(e)}")
+        raise
+
+
 def create_growth_stages_table():
     """Create the SQLite database and populate the growth_stages table"""
     try:
@@ -543,6 +730,10 @@ def setup_database():
         logger.info("Starting database setup")
         create_growth_stages_table()
         create_architecture_problems_table()
+        create_saas_types_table()
+        create_orientations_table()
+        create_industries_table()
+        create_industry_mappings_table()
         logger.info("Database setup completed successfully")
         # For Streamlit integration, log a message in the UI as well
         if runtime.exists():

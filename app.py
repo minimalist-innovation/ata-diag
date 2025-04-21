@@ -4,6 +4,7 @@ import sqlite3
 import importlib.util
 import streamlit as st
 import streamlit.components.v1 as components
+from sqlite3 import Connection
 import html
 import logging
 import toml
@@ -246,6 +247,37 @@ def get_db_connection():
         st.stop()
 
 
+# Cache database queries
+def get_saas_types():
+    conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute("SELECT id, type_name FROM saas_types").fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def get_orientations():
+    conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute("SELECT id, orientation_name FROM orientations").fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+def get_industries(saas_type_id, orientation_id):
+    conn = get_db_connection()
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute('''
+                        SELECT i.id, i.industry_name
+                        FROM industry_mappings im
+                                 JOIN industries i ON im.industry_id = i.id
+                        WHERE im.saas_type_id = ?
+                          AND im.orientation_id = ?
+                        ''', (saas_type_id, orientation_id)).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
 def determine_company_stage(revenue):
     """Query the SQLite database to determine company stage based on revenue"""
     logger.debug(f"Determining company stage for revenue: ${revenue}M")
@@ -421,6 +453,36 @@ def main():
 
         # Basic interactivity for demo purposes
         st.markdown("<div class='dashboard-container'>", unsafe_allow_html=True)
+
+        # Determine the SaaS Classification
+        st.header("Company Information")
+
+        # SaaS Type Selection
+        saas_types = get_saas_types()
+        selected_saas_type = st.selectbox(
+            "Select your SaaS company type:",
+            options=saas_types,
+            format_func=lambda x: x['type_name']
+        )
+
+        # Orientation Selection
+        orientations = get_orientations()
+        selected_orientation = st.selectbox(
+            "Is your company Horizontal or Vertical SaaS?",
+            options=orientations,
+            format_func=lambda x: x['orientation_name']
+        )
+
+        industries = get_industries(selected_saas_type['id'], selected_orientation['id'])
+        if not industries:
+            st.error("No valid industries found for this combination. Please check your previous selections.")
+            return
+
+        selected_industry = st.selectbox(
+            "Select your primary industry/sector:",
+            options=industries,
+            format_func=lambda x: x['industry_name']
+        )
 
         # Ask for company existence duration
         months_existed = st.number_input("How long has your company been in existence? (months)",
