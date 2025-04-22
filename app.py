@@ -4,12 +4,18 @@ import sqlite3
 import importlib.util
 import streamlit as st
 import streamlit.components.v1 as components
-from sqlite3 import Connection
+
 import html
 import logging
 import toml
 
 from datetime import datetime
+from db_queries.saas_types import get_saas_types
+from db_queries.orientations import get_orientations
+from db_queries.industries import get_industries
+from db_queries.growth_stages import determine_company_stage
+from db_queries.connection import get_db_connection
+from utils.slider_helpers import get_slider_format, get_slider_range, get_step_size
 
 
 # Load and use Streamlit config
@@ -227,88 +233,6 @@ def import_and_setup_database():
         st.stop()
 
 
-def get_db_connection():
-    """Create a database connection and return the connection object"""
-    try:
-        # Check if database exists, if not create it
-        if not os.path.exists('data/traction_diagnostics.db'):
-            logger.warning("Database file not found, attempting to initialize")
-            import_and_setup_database()
-
-        conn = sqlite3.connect('data/traction_diagnostics.db')
-        conn.row_factory = sqlite3.Row  # This enables column access by name
-        logger.debug("Database connection established")
-        return conn
-    except sqlite3.Error as e:
-        logger.error(f"Database connection error: {str(e)}")
-        st.error(f"Database connection error: {str(e)}")
-        if 'conn' in locals() and conn:
-            conn.close()
-        st.stop()
-
-
-# Cache database queries
-def get_saas_types():
-    conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
-    rows = conn.execute("SELECT id, type_name FROM saas_types").fetchall()
-    conn.close()
-    return [dict(row) for row in rows]
-
-
-def get_orientations():
-    conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
-    rows = conn.execute("SELECT id, orientation_name FROM orientations").fetchall()
-    conn.close()
-    return [dict(row) for row in rows]
-
-
-def get_industries(saas_type_id, orientation_id):
-    conn = get_db_connection()
-    conn.row_factory = sqlite3.Row
-    rows = conn.execute('''
-                        SELECT i.id, i.industry_name
-                        FROM industry_mappings im
-                                 JOIN industries i ON im.industry_id = i.id
-                        WHERE im.saas_type_id = ?
-                          AND im.orientation_id = ?
-                        ''', (saas_type_id, orientation_id)).fetchall()
-    conn.close()
-    return [dict(row) for row in rows]
-
-
-def determine_company_stage(revenue):
-    """Query the SQLite database to determine company stage based on revenue"""
-    logger.debug(f"Determining company stage for revenue: ${revenue}M")
-    conn = get_db_connection()
-    try:
-        cursor = conn.cursor()
-
-        # Query the database for the appropriate growth stage
-        cursor.execute(
-            'SELECT growth_stage_name, description FROM growth_stages WHERE ? BETWEEN low_range AND high_range',
-            (revenue,)
-        )
-
-        result = cursor.fetchone()
-
-        if result:
-            logger.info(f"Determined company stage: {result['growth_stage_name']}")
-            return result['growth_stage_name'], result['description']
-        else:
-            # Fallback in case no range matches (shouldn't happen with proper ranges)
-            logger.warning(f"Could not determine company stage for revenue: ${revenue}M")
-            return "Undetermined", "We couldn't determine your company stage. Please contact support."
-
-    except sqlite3.Error as e:
-        logger.error(f"Database query error: {str(e)}")
-        return "Error", f"An error occurred while determining your company stage: {str(e)}"
-
-    finally:
-        conn.close()
-
-
 def query_problems_by_pillar_and_stage(pillar, stage_name):
     """Query problems for a specific pillar and growth stage
 
@@ -340,42 +264,6 @@ def query_problems_by_pillar_and_stage(pillar, stage_name):
         return []
     finally:
         conn.close()
-
-
-def get_slider_format(metric_name):
-    """Determine the appropriate slider format based on the metric name"""
-    if "CAC Payback Period" in metric_name:
-        return "%d months"
-    elif "Decision turnaround time" in metric_name:
-        return "%d hours"
-    elif "CAC trend" in metric_name:
-        return "%.2f"
-    else:
-        return "%.1f%%"
-
-
-def get_slider_range(metric_name):
-    """Determine the appropriate slider range based on the metric name"""
-    if "CAC Payback Period" in metric_name:
-        return (0, 36)  # 0 to 36 months
-    elif "Decision turnaround time" in metric_name:
-        return (0, 168)  # 0 to 168 hours (1 week)
-    elif "CAC trend" in metric_name:
-        return (-1.0, 1.0)  # -1 to 1
-    else:
-        return (0.0, 100.0)  # 0% to 100%
-
-
-def get_step_size(metric_name):
-    """Determine the appropriate step size based on the metric name"""
-    if "CAC Payback Period" in metric_name:
-        return 1.0  # Months as decimal
-    elif "Decision turnaround time" in metric_name:
-        return 1.0  # Hours as decimal
-    elif "CAC trend" in metric_name:
-        return 0.1  # 0.1 increments
-    else:
-        return 0.1  # 0.1% increments
 
 
 def display_metrics_for_pillar(pillar, growth_stage):
