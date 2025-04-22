@@ -28,6 +28,11 @@ def setup_database(conn=None):
     """Main database setup orchestration"""
     try:
         logger.info("Starting database setup")
+        # Check if the data directory exists, if not create it
+        if not os.path.exists('data'):
+            os.makedirs('data')
+            logger.info("Created 'data' directory")
+
         if not conn:
             conn = sqlite3.connect('data/traction_diagnostics.db', check_same_thread=False)
 
