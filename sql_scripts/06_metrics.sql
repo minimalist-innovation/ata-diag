@@ -8,6 +8,9 @@ CREATE TABLE IF NOT EXISTS metrics
     units       TEXT NOT NULL
 );
 
+DELETE
+FROM metrics;
+
 INSERT OR IGNORE INTO metrics (id,
                                metric_name,
                                description,

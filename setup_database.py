@@ -24,18 +24,13 @@ def execute_sql_file(conn, path):
         raise
 
 
-def setup_database():
+def setup_database(conn=None):
     """Main database setup orchestration"""
     try:
         logger.info("Starting database setup")
+        if not conn:
+            conn = sqlite3.connect('data/traction_diagnostics.db', check_same_thread=False)
 
-        # Create data directory if needed
-        os.makedirs('data', exist_ok=True)
-
-        # Establish connection
-        conn = sqlite3.connect('data/traction_diagnostics.db')
-
-        # Enable foreign keys
         conn.execute("PRAGMA foreign_keys = ON")
 
         # Execution order matters!
@@ -46,8 +41,8 @@ def setup_database():
             'sql_scripts/04_growth_stages.sql',
             'sql_scripts/05_architecture_pillars.sql',
             'sql_scripts/06_metrics.sql',
-            'sql_scripts/07_architecture_growth_stage_metric_associations.sql',
-            'sql_scripts/08_industry_mappings.sql'
+            'sql_scripts/08_architecture_growth_stage_metric_associations.sql',
+            'sql_scripts/07_industry_mappings.sql'
         ]
 
         # Execute all SQL files
@@ -67,7 +62,7 @@ def setup_database():
             st.error(f"Database error: {str(e)}")
         raise
     finally:
-        if conn:
+        if not conn:
             conn.close()
 
 

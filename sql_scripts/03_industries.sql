@@ -4,6 +4,9 @@ CREATE TABLE IF NOT EXISTS industries
     industry_name TEXT NOT NULL UNIQUE
 );
 
+DELETE
+FROM industries;
+
 INSERT OR IGNORE INTO industries (id, industry_name)
 VALUES (1, 'Healthcare'),
        (2, 'Financial Services'),

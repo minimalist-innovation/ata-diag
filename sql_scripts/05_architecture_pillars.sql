@@ -6,6 +6,8 @@ CREATE TABLE architecture_pillars
     display_order INTEGER NOT NULL
 );
 
+DELETE
+FROM architecture_pillars;
 
 INSERT INTO architecture_pillars
     (id, pillar_name, description, display_order)

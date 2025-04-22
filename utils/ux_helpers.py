@@ -76,3 +76,18 @@ def add_logo(primary_color):
 
     except Exception as e:
         st.error(f"Error displaying logos: {str(e)}")
+
+
+# ====== Stateful Slider======
+def create_slider(metric, pillar_name, step_size, default_value, slider_format):
+    slider_key = f"slider_{pillar_name}_{metric['id']}"
+
+    return st.slider(
+        label=f"{metric['metric_name']} ({metric['units']})",
+        min_value=float(metric['min_value']),
+        max_value=float(metric['max_value']),
+        value=st.session_state.get(slider_key, default_value),
+        step=step_size,
+        format=slider_format,
+        key=slider_key
+    )

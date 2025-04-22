@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS industry_mappings
     FOREIGN KEY (industry_id) REFERENCES industries (id)
 );
 
+DELETE
+FROM industry_mappings;
+
 INSERT OR IGNORE INTO industry_mappings
 VALUES (1, 2, 1),
        (1, 2, 2),

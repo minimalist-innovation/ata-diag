@@ -1,10 +1,8 @@
 import os
 import sys
-import sqlite3
 import importlib.util
 import streamlit as st
-
-import html
+from streamlit import cache_data, cache_resource
 import logging
 import toml
 
@@ -14,8 +12,8 @@ from db_queries.orientations import get_orientations
 from db_queries.industries import get_industries
 from db_queries.architecture_pillars import get_architecture_pillars
 from db_queries.growth_stages import determine_company_stage
-from db_queries.connection import get_db_connection
-from utils.slider_helpers import get_slider_format, get_slider_range, get_step_size
+from db_queries.metrics import get_metrics
+from utils.slider_helpers import get_slider_format, get_step_size
 from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js
 
 
@@ -131,136 +129,108 @@ except Exception as e:
 
 
 def import_and_setup_database():
-    """Import the setup_database module and run the setup function"""
+    """Import and run database setup once"""
     try:
-        # Check if setup_database.py exists
-        if not os.path.exists('setup_database.py'):
-            logger.error("setup_database.py file not found")
-            st.error("setup_database.py file not found. Please ensure it's in the same directory as app.py.")
-            st.stop()
-
-        # Import the module dynamically
-        spec = importlib.util.spec_from_file_location("setup_database", "setup_database.py")
-        setup_db_module = importlib.util.module_from_spec(spec)
-        sys.modules["setup_database"] = setup_db_module
-        spec.loader.exec_module(setup_db_module)
-
-        logger.info("Successfully imported setup_database module")
-
-        # Run the setup function
-        setup_db_module.setup_database()
+        from setup_database import setup_database
+        setup_database()
         logger.info("Database setup completed")
+        st.session_state.db_init = True  # Mark as initialized
     except Exception as e:
-        logger.error(f"Error setting up database: {str(e)}")
-        st.error(f"Error setting up database: {str(e)}")
+        logger.error(f"Database setup failed: {str(e)}")
+        st.error(f"Critical error: {str(e)}")
         st.stop()
 
 
-def query_problems_by_pillar_and_stage(pillar, stage_name):
-    """Query problems for a specific pillar and growth stage
+def init_session_state():
+    """Initialize persistent session variables only"""
+    if 'db_init' not in st.session_state:
+        st.session_state.update({
+            'db_init': True,
+            'metrics_cache': {},
+            'pillar_data': None,
+            'selected_saas_type': None,
+            'selected_orientation': None,
+            'selected_industry': None
+        })
 
-    Args:
-        pillar: One of "Product", "Business", "Systems", "Team"
-        stage_name: One of the growth stage names (e.g., "Validation Seekers")
-
-    Returns:
-        List of problem dictionaries
-    """
-    logger.debug(f"Querying problems for pillar: {pillar}, stage: {stage_name}")
-    conn = get_db_connection()
-    try:
-        cursor = conn.cursor()
-
-        cursor.execute('''
-                       SELECT *
-                       FROM architecture_problems
-                       WHERE architecture_pillar = ?
-                         AND growth_stage_name = ?
-                       ''', (pillar, stage_name))
-
-        results = [dict(row) for row in cursor.fetchall()]
-        logger.debug(f"Found {len(results)} problems for {pillar} in {stage_name}")
-        return results
-    except sqlite3.Error as e:
-        logger.error(f"Error querying problems: {str(e)}")
-        st.error(f"Error retrieving metrics: {str(e)}")
-        return []
-    finally:
-        conn.close()
+        # One-time database setup check
+        if not os.path.exists('data/traction_diagnostics.db'):
+            import_and_setup_database()
 
 
-def display_metrics_for_pillar(pillar, growth_stage):
-    """Display metric sliders for a specific pillar and growth stage"""
-    # Get problems/metrics for this pillar and growth stage
-    problems = query_problems_by_pillar_and_stage(pillar, growth_stage)
+def display_metrics_for_pillar(architecture_pillar_id,
+                               growth_stage_id,
+                               saas_type_id=None,
+                               industry_id=None):
+    # Get metrics dictionary with ID keys
+    metrics_dict = get_metrics(
+        growth_stage_id=growth_stage_id,
+        architecture_pillar_id=architecture_pillar_id,
+        saas_type_id=saas_type_id,
+        industry_id=industry_id
+    )
 
-    if not problems:
-        logger.warning(f"No metrics found for {pillar} in {growth_stage} stage")
-        st.write(f"No metrics found for {pillar} in {growth_stage} stage.")
+    if not metrics_dict:
+        logger.warning(f"No metrics found for pillar ID {architecture_pillar_id} in stage ID {growth_stage_id}")
+        st.write(f"No metrics found for this combination.")
         return
 
-    # Display each metric with a slider
-    for problem in problems:
-        # Escape the metric name and problem description
-        metric_name = html.escape(problem['metric_name'])
-        problem_description = html.escape(problem['problem_description'])
+    # Get pillar name for display purposes
+    pillar_name = get_architecture_pillars().get(architecture_pillar_id, {}).get('pillar_name',
+                                                                                 f"Pillar {architecture_pillar_id}")
 
-        # Display the metric name and problem description with bold for the metric name
-        st.markdown(f"**{metric_name}**")
-        st.markdown(f"{problem_description}")
+    # Display each metric using dictionary values
+    for metric_id, metric in metrics_dict.items():
+        with st.expander(metric['metric_name']):
+            col1, col2 = st.columns([3, 1])
 
-        # Create a unique key for each slider
-        slider_key = f"{pillar}_{problem['id']}_{problem['metric_name']}"
+            with col1:
+                # Display metric details
+                st.markdown(f"**Description:** {metric['description']}")
+                if metric['blog_link'] or metric['video_link']:
+                    st.markdown("**Resources:**")
+                    if metric['blog_link']:
+                        st.markdown(f"[📚 Guide]({metric['blog_link']})")
+                    if metric['video_link']:
+                        st.markdown(f"[🎥 Tutorial]({metric['video_link']})")
 
-        # Get appropriate format and range for this metric
-        slider_format = get_slider_format(problem['metric_name'])
-        min_val, max_val = get_slider_range(problem['metric_name'])
-        step_size = get_step_size(problem['metric_name'])
+                # Create unique slider key
+                slider_key = f"{pillar_name}_{metric_id}_{metric['metric_name']}"
 
-        # Determine default value based on the rules
-        if min_val != problem['low_range']:
-            default_value = problem['low_range']
-        elif max_val != problem['hi_range']:
-            default_value = problem['hi_range']
-        else:
-            # If no special case, use the midpoint or appropriate default
-            if "CAC trend" in problem['metric_name']:
-                default_value = 0.0  # Default to flat for CAC trend
-            else:
-                default_value = (problem['low_range'] + problem['hi_range']) / 2
+                # Get slider configuration
+                slider_format = get_slider_format(metric['units'])
+                min_val = float(metric['min_value'])
+                max_val = float(metric['max_value'])
+                step_size = get_step_size(metric['units'])
 
-        # Ensure default is within bounds
-        default_value = max(min_val, min(max_val, default_value))
+                # Calculate default value
+                default_value = max(min_val, min(max_val,
+                                                 (float(metric['lo_range_value']) + float(
+                                                     metric['hi_range_value'])) / 2))
 
-        logger.debug(f"Creating slider for metric: {metric_name}, range: {min_val}-{max_val}, default: {default_value}")
+                # Create slider
+                current_value = st.slider(
+                    label=f"{metric['metric_name']} ({metric['units']})",
+                    min_value=min_val,
+                    max_value=max_val,
+                    value=default_value,
+                    step=step_size,
+                    format=slider_format,
+                    key=slider_key
+                )
 
-        # Create the slider with appropriate format
-        value = st.slider(
-            f"**Current value**",
-            min_value=float(min_val),
-            max_value=float(max_val),
-            value=float(default_value),
-            step=step_size,
-            format=slider_format,
-            key=slider_key
-        )
+            with col2:
+                # Display value ranges
+                st.metric("Benchmark Minimum", f"{metric['lo_range_value']} {metric['units']}")
+                st.metric("Benchmark Maximum", f"{metric['hi_range_value']} {metric['units']}")
+                st.metric("Your Current Value", f"{current_value} {metric['units']}")
 
         st.markdown("---")
 
 
-# === App Layout ===
-def main():
+def render_ui_components():
     try:
-        logger.debug("Starting Adaptive Traction Architecture Diagnostics app")
-
-        # Load all the assets
-        load_css("static/styles.css")
-        load_js("static/script.js")
-
-        # Add the toolbar
-        add_toolbar()
-        # Add logo
-        add_logo(primary_color)
+        logger.debug("Rendering UI components")
 
         # Basic interactivity for demo purposes
         st.markdown("<div class='dashboard-container'>", unsafe_allow_html=True)
@@ -272,27 +242,26 @@ def main():
         saas_types = get_saas_types()
         selected_saas_type = st.selectbox(
             "Select your SaaS company type:",
-            options=saas_types,
-            format_func=lambda x: x['type_name']
+            options=saas_types.keys(),
+            format_func=lambda x: saas_types[x]['type_name']
         )
 
         # Orientation Selection
         orientations = get_orientations()
         selected_orientation = st.selectbox(
             "Is your company Horizontal or Vertical SaaS?",
-            options=orientations,
-            format_func=lambda x: x['orientation_name']
+            options=orientations.keys(),
+            format_func=lambda x: orientations[x]['orientation_name']
         )
 
-        industries = get_industries(selected_saas_type['id'], selected_orientation['id'])
+        industries = get_industries(selected_saas_type, selected_orientation)
         if not industries:
             st.error("No valid industries found for this combination. Please check your previous selections.")
             return
-
         selected_industry = st.selectbox(
             "Select your primary industry/sector:",
-            options=industries,
-            format_func=lambda x: x['industry_name']
+            options=industries.keys(),
+            format_func=lambda x: industries[x]['industry_name']
         )
 
         # Ask for company existence duration
@@ -333,33 +302,52 @@ def main():
                 "Your revenue exceeds \\$10M ARR. This diagnostic tool is primarily designed for companies in the \\$1M-\\$10M ARR range. Some insights may not apply to your current scale.")
 
         # Determine company stage using the database
-        stage, explanation = determine_company_stage(annual_revenue)
+        current_stage = None
+        stage_data = determine_company_stage(annual_revenue)
+        # Handle case where no matching stage found
+        if not stage_data:
+            stage_name = "Undetermined"
+            stage_description = "Could not determine company stage"
+        else:
+            # Extract first (and only) entry from the dictionary
+            stage_id = next(iter(stage_data))  # Get the dictionary key (stage ID)
+            current_stage = stage_id
+            stage_info = stage_data[stage_id]  # Get the nested stage info
+            stage_name = stage_info['growth_stage_name']
+            stage_description = stage_info['description']
 
         # Display stage with styling based on qualification
-        if stage == "Pre-Qualification":
+        if stage_name == "Pre-Qualification":
             logger.info(f"Company stage determined as Pre-Qualification (ARR: ${annual_revenue}M)")
-            st.markdown(f"<div class='error'><strong>Company Stage: {stage}</strong><br>{explanation}</div>",
+            st.markdown(f"<div class='error'><strong>Company Stage: {stage_name}</strong><br>{stage_description}</div>",
                         unsafe_allow_html=True)
         else:
-            logger.info(f"Company stage determined as {stage} (ARR: ${annual_revenue}M)")
-            st.markdown(f"<div class='success'><strong>Company Stage: {stage}</strong></div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='info'>{explanation}</div>", unsafe_allow_html=True)
+            logger.info(f"Company stage determined as {stage_name} (ARR: ${annual_revenue}M)")
+            st.markdown(f"<div class='success'><strong>Company Stage: {stage_name}</strong></div>",
+                        unsafe_allow_html=True)
+            st.markdown(f"<div class='info'>{stage_description}</div>", unsafe_allow_html=True)
 
             # Only show diagnostic options if qualified
-            if stage != "Pre-Qualification":
+            if stage_name != "Pre-Qualification":
                 st.markdown("<h4>Four Pillars of Adaptive Traction Architecture</h4>", unsafe_allow_html=True)
 
                 # Create tabs for the four pillars
                 logger.debug("Creating pillar tabs")
-                pillars_data = get_architecture_pillars()
-                pillar_names = [p['pillar_name'] for p in pillars_data]
+                pillars_data = get_architecture_pillars()  # Returns dict {id: {pillar_name, description}}
+
+                # Get ordered pillar IDs based on display_order from SQL query
+                pillar_ids = list(pillars_data.keys())  # Already ordered by display_order from SQL
+
+                # Create tabs using pillar names in display_order
+                pillar_names = [pillars_data[pid]['pillar_name'] for pid in pillar_ids]
                 pillars_tabs = st.tabs(pillar_names)
 
-                # Populate tab content
+                # Populate tab content using pillar IDs
                 for i, tab in enumerate(pillars_tabs):
                     with tab:
-                        st.markdown(f"**{pillars_data[i]['description']}**")
-                        display_metrics_for_pillar(pillars_data[i]['pillar_name'], stage)
+                        current_pillar_id = pillar_ids[i]
+                        st.markdown(f"**{pillars_data[current_pillar_id]['description']}**")
+                        display_metrics_for_pillar(current_pillar_id, current_stage)
 
                 disclaimer_text = f"""
                 This tool is provided for informational and experimental purposes only and is provided 'as is' without warranties of any kind.
@@ -394,6 +382,32 @@ def main():
         logger.info("App rendered successfully")
 
     except Exception as e:
+        logger.error(f"An error occurred when rendering the UI components: {str(e)}", exc_info=True)
+        st.error(f"An error occurred: {str(e)}")
+        st.info("Please refresh the page and try again.")
+
+
+# === App Layout ===
+def main():
+    try:
+        logger.debug("Starting Adaptive Traction Architecture Diagnostics app")
+
+        # Initialize Session State
+        init_session_state()
+
+        # Load all the assets
+        load_css("static/styles.css")
+        load_js("static/script.js")
+
+        # Add the toolbar
+        add_toolbar()
+        # Add logo
+        add_logo(primary_color)
+
+        # Rendering UI components
+        render_ui_components()
+
+    except Exception as e:
         logger.error(f"An error occurred in the main app flow: {str(e)}", exc_info=True)
         st.error(f"An error occurred: {str(e)}")
         st.info("Please refresh the page and try again.")
@@ -401,8 +415,6 @@ def main():
 
 if __name__ == '__main__':
     try:
-        # Make sure the database is set up
-        import_and_setup_database()
         main()
     except Exception as e:
         logger.critical(f"Fatal error in app startup: {str(e)}", exc_info=True)
