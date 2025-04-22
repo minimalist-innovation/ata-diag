@@ -178,52 +178,55 @@ def display_metrics_for_pillar(architecture_pillar_id,
     # Get pillar name for display purposes
     pillar_name = get_architecture_pillars().get(architecture_pillar_id, {}).get('pillar_name',
                                                                                  f"Pillar {architecture_pillar_id}")
-
     # Display each metric using dictionary values
     for metric_id, metric in metrics_dict.items():
-        with st.expander(metric['metric_name']):
+        container = st.container(border=True)
+
+        with container:
             col1, col2 = st.columns([3, 1])
 
             with col1:
-                # Display metric details
-                st.markdown(f"**Description:** {metric['description']}")
-                if metric['blog_link'] or metric['video_link']:
-                    st.markdown("**Resources:**")
-                    if metric['blog_link']:
-                        st.markdown(f"[📚 Guide]({metric['blog_link']})")
-                    if metric['video_link']:
-                        st.markdown(f"[🎥 Tutorial]({metric['video_link']})")
+                # Video hover functionality
+                if metric['video_link']:
+                    video_url = metric['video_link'].replace('watch?v=', 'embed/')
+                    with st.popover("📹 Video Guide", help="Click for video tutorial"):
+                        st.video(video_url)
 
-                # Create unique slider key
+                # Metric header
+                st.markdown(f"### {metric['metric_name']}")
+
+                # Description with read more
+                short_desc = ' '.join(metric['description'].split()[:10]) + '...'
+                if metric['blog_link']:
+                    st.markdown(f"{short_desc} [Read More]({metric['blog_link']})")
+                else:
+                    st.markdown(short_desc)
+
+                # Slider configuration
                 slider_key = f"{pillar_name}_{metric_id}_{metric['metric_name']}"
-
-                # Get slider configuration
                 slider_format = get_slider_format(metric['units'])
                 min_val = float(metric['min_value'])
                 max_val = float(metric['max_value'])
                 step_size = get_step_size(metric['units'])
 
-                # Calculate default value
-                default_value = max(min_val, min(max_val,
-                                                 (float(metric['lo_range_value']) + float(
-                                                     metric['hi_range_value'])) / 2))
-
-                # Create slider
+                # Slider with improved labeling
                 current_value = st.slider(
-                    label=f"{metric['metric_name']} ({metric['units']})",
+                    label="Adjust your value:",
                     min_value=min_val,
                     max_value=max_val,
-                    value=default_value,
+                    value=(float(metric['lo_range_value']) + float(metric['hi_range_value'])) / 2,
                     step=step_size,
                     format=slider_format,
                     key=slider_key
                 )
 
             with col2:
-                # Display value ranges
-                st.metric("Benchmark Minimum", f"{metric['lo_range_value']} {metric['units']}")
-                st.metric("Benchmark Maximum", f"{metric['hi_range_value']} {metric['units']}")
-                st.metric("Your Current Value", f"{current_value} {metric['units']}")
+                # Value ranges in a compact layout
+                st.metric("Target Range",
+                          f"{metric['lo_range_value']} - {metric['hi_range_value']} {metric['units']}")
+                st.metric("Your Value",
+                          f"{current_value} {metric['units']}",
+                          help="Current value based on slider position")
 
         st.markdown("---")
 
