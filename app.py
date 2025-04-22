@@ -12,6 +12,7 @@ from datetime import datetime
 from db_queries.saas_types import get_saas_types
 from db_queries.orientations import get_orientations
 from db_queries.industries import get_industries
+from db_queries.architecture_pillars import get_architecture_pillars
 from db_queries.growth_stages import determine_company_stage
 from db_queries.connection import get_db_connection
 from utils.slider_helpers import get_slider_format, get_slider_range, get_step_size
@@ -350,39 +351,15 @@ def main():
 
                 # Create tabs for the four pillars
                 logger.debug("Creating pillar tabs")
-                pillars_tabs = st.tabs(["Business/Revenue", "Product", "Systems", "Team"])
+                pillars_data = get_architecture_pillars()
+                pillar_names = [p['pillar_name'] for p in pillars_data]
+                pillars_tabs = st.tabs(pillar_names)
 
-                # Business pillar tab
-                with pillars_tabs[0]:
-                    st.markdown(
-                        "**Evaluates your acquisition channels, pricing strategy, customer journey, and revenue resilience to identify patterns limiting growth or creating vulnerability to market shifts.**")
-
-                    logger.debug("Displaying Business pillar metrics")
-                    display_metrics_for_pillar("Business", stage)
-
-                # Product pillar tab
-                with pillars_tabs[1]:
-                    st.markdown(
-                        "**Assesses your product development approach, feedback mechanisms, feature adoption patterns, and market responsiveness to reveal gaps between product evolution and market needs.**")
-
-                    logger.debug("Displaying Product pillar metrics")
-                    display_metrics_for_pillar("Product", stage)
-
-                # Systems pillar tab
-                with pillars_tabs[2]:
-                    st.markdown(
-                        "**Examines your operational processes, technology infrastructure, data accessibility, and technical debt to identify inefficiencies and scalability constraints.**")
-
-                    logger.debug("Displaying Systems pillar metrics")
-                    display_metrics_for_pillar("Systems", stage)
-
-                # Team pillar tab
-                with pillars_tabs[3]:
-                    st.markdown(
-                        "**Explores your decision-making frameworks, information flow patterns, organizational structure, and change management capabilities to uncover bottlenecks limiting adaptive capacity.**")
-
-                    logger.debug("Displaying Team pillar metrics")
-                    display_metrics_for_pillar("Team", stage)
+                # Populate tab content
+                for i, tab in enumerate(pillars_tabs):
+                    with tab:
+                        st.markdown(f"**{pillars_data[i]['description']}**")
+                        display_metrics_for_pillar(pillars_data[i]['pillar_name'], stage)
 
                 disclaimer_text = f"""
                 This tool is provided for informational and experimental purposes only and is provided 'as is' without warranties of any kind.
