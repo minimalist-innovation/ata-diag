@@ -100,6 +100,17 @@ body, p, div, span, li, td, th, button {
     text-decoration: none;
 }
 
+/* Create hover-like effect for popover trigger */
+.stPopover > div:first-child {
+    transition: opacity 0.2s;
+    opacity: 0.7;
+}
+
+.stPopover > div:first-child:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
 /* Success & Info messages */
 .success {
     background-color: rgba(56, 84, 36, 0.1);
@@ -127,15 +138,16 @@ body, p, div, span, li, td, th, button {
 
 /* Footer styling */
 .footer {
-    position: fixed;
-    left: 0;
+    position: sticky;
     bottom: 0;
-    width: 100%;
+    max-width: 1600px;
+    margin: 20px auto 0;
     background-color: #AD244A;
     color: white;
     text-align: center;
     padding: 10px;
     font-size: 0.8em;
+    border-radius: 8px;
 }
 
 .footer-spacer {
@@ -148,22 +160,32 @@ body, p, div, span, li, td, th, button {
     margin-top: 0 !important;
 }
 
+.sticky-header {
+    position: sticky;
+    top: -1px; /* Compensate for container padding */
+    z-index: 9999;
+    background: white;
+    margin: 0 auto;
+    max-width: 1600px;
+}
+
 /* Top toolbar */
 .top-toolbar {
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
-    width: 100vw;
+    max-width: 1600px;
+    margin: 0 auto;
     background: #AD244A;
     color: white;
     z-index: 9999;
     display: flex;
     align-items: center;
-    justify-content: flex-end; /* <-- This moves CTA to the right */
+    justify-content: flex-end;
     padding: 0.6em 1.5em;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     font-family: 'Open Sans', sans-serif;
     gap: 1.5em;
+    border-radius: 8px;
 }
 
 .toolbar-text {
