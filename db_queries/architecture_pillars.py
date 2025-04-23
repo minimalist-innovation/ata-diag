@@ -10,7 +10,7 @@ def get_architecture_pillars():
         with conn:
             cursor = conn.cursor()
             cursor.execute("""
-                           SELECT id, pillar_name, description
+                           SELECT id, pillar_name, description, display_icon
                            FROM architecture_pillars
                            ORDER BY display_order
                            """)
@@ -19,7 +19,8 @@ def get_architecture_pillars():
             pillars_dict = {
                 row['id']: {
                     'pillar_name': row['pillar_name'],
-                    'description': row['description']
+                    'description': row['description'],
+                    'display_icon': row['display_icon']
                 }
                 for row in cursor.fetchall()
             }

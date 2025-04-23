@@ -14,7 +14,7 @@ from db_queries.architecture_pillars import get_architecture_pillars
 from db_queries.growth_stages import determine_company_stage
 from db_queries.metrics import get_metrics
 from utils.slider_helpers import get_slider_format, get_step_size
-from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js
+from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer
 
 
 # Load and use Streamlit config
@@ -89,7 +89,7 @@ else:
 # === Page Configuration ===
 st.set_page_config(
     page_title="Adaptive Traction Architecture Diagnostics",
-    page_icon="🔍",
+    page_icon="💸",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -342,7 +342,11 @@ def render_ui_components():
                 pillar_ids = list(pillars_data.keys())  # Already ordered by display_order from SQL
 
                 # Create tabs using pillar names in display_order
-                pillar_names = [pillars_data[pid]['pillar_name'] for pid in pillar_ids]
+                pillar_names = [
+                    " ".join([pillars_data[pid]['display_icon'],
+                              pillars_data[pid]['pillar_name']])
+                    for pid in pillar_ids
+                ]
                 pillars_tabs = st.tabs(pillar_names)
 
                 # Populate tab content using pillar IDs
@@ -371,17 +375,6 @@ def render_ui_components():
         # Horizontal line
         st.markdown("---")
 
-        # Copyright footer with dynamically generated year
-        # Add a spacer to prevent content from being hidden behind the fixed footer
-        st.markdown("<div class='footer-spacer'></div>", unsafe_allow_html=True)
-
-        # Copyright footer with dynamically generated year
-        current_year = datetime.now().year
-        st.markdown(f"""
-        <div class="footer">
-            © {current_year} Minimalist Innovation LLC. All rights reserved.
-        </div>
-        """, unsafe_allow_html=True)
         logger.info("App rendered successfully")
 
     except Exception as e:
@@ -409,6 +402,9 @@ def main():
 
         # Rendering UI components
         render_ui_components()
+
+        # Add footer
+        add_footer()
 
     except Exception as e:
         logger.error(f"An error occurred in the main app flow: {str(e)}", exc_info=True)

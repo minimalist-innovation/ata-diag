@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -15,28 +17,39 @@ def load_js(file_path):
         components.html(f"<script>{js_code}</script>", height=0)
 
 
-def add_toolbar():
-    st.markdown("""
-    <style>
-        /* Hide Streamlit's default header and menu */
-        header, #MainMenu, footer {visibility: hidden;}
-
-        /* Remove top margin/padding */
-        .block-container { padding-top: 0 !important; margin-top: 0 !important; }
-        .css-18e3th9 { padding-top: 0 !important; } /* Sometimes needed for newer Streamlit */
-    </style>
+def add_footer():
+    # Copyright footer with dynamically generated year
+    current_year = datetime.now().year
+    st.markdown(f"""
+    <div class="footer">
+        © {current_year} Minimalist Innovation LLC. All rights reserved.
+    </div>
     """, unsafe_allow_html=True)
 
+
+def add_toolbar():
+    # st.markdown("""
+    # <style>
+    #     /* Hide Streamlit's default header and menu */
+    #     header, #MainMenu, footer {visibility: hidden;}
+    #
+    #     /* Remove top margin/padding */
+    #     .block-container { padding-top: 0 !important; margin-top: 0 !important; }
+    #     .css-18e3th9 { padding-top: 0 !important; } /* Sometimes needed for newer Streamlit */
+    # </style>
+    # """, unsafe_allow_html=True)
+
     app_toolbar_html = f"""
-    <div class="top-toolbar">
-        <span class="toolbar-text">Need Clarity?</span>
-        <a href="https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2" 
-            class="toolbar-cta" 
-            target="_blank">
-            🤙Schedule a Call Now
-        </a>
-    </div>
-    <div class="toolbar-spacer"></div>
+        <div class="sticky-header">
+            <div class="top-toolbar">
+                <span class="toolbar-text">Need Clarity?</span>
+                <a href="https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2" 
+                    class="toolbar-cta" 
+                    target="_blank">
+                    🤙 Schedule a Call Now
+                </a>
+            </div>
+        </div>
     """
     st.markdown(app_toolbar_html, unsafe_allow_html=True)
 
