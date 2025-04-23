@@ -162,6 +162,8 @@ def display_metrics_for_pillar(architecture_pillar_id,
                                growth_stage_id,
                                saas_type_id=None,
                                industry_id=None):
+    logger.info(f"Displaying metrics for pillar {architecture_pillar_id}, growth stage {growth_stage_id}")
+
     # Get metrics dictionary with ID keys
     metrics_dict = get_metrics(
         growth_stage_id=growth_stage_id,
@@ -180,6 +182,8 @@ def display_metrics_for_pillar(architecture_pillar_id,
                                                                                  f"Pillar {architecture_pillar_id}")
     # Display each metric using dictionary values
     for metric_id, metric in metrics_dict.items():
+        logger.info(f"Trying to display metric for pillar {architecture_pillar_id}: "
+                    f"{metric['metric_name']}")
         container = st.container(border=True)
 
         with container:
