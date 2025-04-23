@@ -8,6 +8,13 @@ from sqlite3 import Connection
 import html
 import logging
 import toml
+import base64
+import io
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import inch
 
 from datetime import datetime
 
@@ -438,7 +445,7 @@ def display_metrics_for_pillar(pillar, growth_stage):
 
 
 def save_architecture_problems_metrics_input():
-    """Save architecture problems metrics inputs to database"""
+    """Save architecture problems metrics inputs to memory"""
     metrics_data = []
 
     # Iterating widget data from session state and creating metrics_data from it
@@ -453,23 +460,83 @@ def save_architecture_problems_metrics_input():
         metric_data.append(value)
         metrics_data.append(metric_data)
 
-    # Connect to the database (creates it if it doesn't exist)
-    conn = sqlite3.connect('data/traction_diagnostics.db')
-    cursor = conn.cursor()
-        
-    for metric_info in metrics_data:
-        cursor.execute('''
-            INSERT INTO architecture_problems_metrics_input
-            (architecture_pillar, growth_stage_name, metric_name, metric_value) 
-            VALUES (?, ?, ?, ?)
-            ''' , (metric_info[0],metric_info[1],metric_info[2],metric_info[3]) ) 
+    return metrics_data
 
-    # Commit changes and close connection
-    conn.commit()
-    conn.close()
-        
-    logger.info(f"Inserted {len(metrics_data)} rows into architecture_problems_metrics_input succefully ")       
+
+def generate_pdf_report(metrics_data):
+    """ generate PDF report format from given metrics data"""
+    buffer = io.BytesIO()
     
+    # Create the PDF document
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    
+    # Custom styles
+    title_style = ParagraphStyle(
+        'Title',
+        parent=styles['Heading1'],
+        fontSize=18,
+        spaceAfter=12
+    )
+    
+    heading_style = ParagraphStyle(
+        'Heading',
+        parent=styles['Heading2'],
+        fontSize=14,
+        spaceAfter=6,
+        spaceBefore=12
+    )
+    
+    normal_style = styles['Normal']
+    normal_style.fontSize = 10
+    normal_style.spaceAfter = 6
+    
+    # Build the PDF content
+    content = []
+    
+    # Report header
+    content.append(Paragraph("Diagnostic Report", title_style))
+    content.append(Paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", normal_style))
+    content.append(Spacer(1, 0.2*inch))
+    
+    # Architecture_problems_metrics information section
+    content.append(Paragraph("Metrics Information", heading_style))
+    
+    # Get all metrics data
+    report_data = [
+        ["Architecture Pillar", "Growth Stage", "Metric", "Metric Value"]
+    ]
+
+    for metric_info in metrics_data:
+        report_data.append(metric_info)
+
+    table = Table(report_data, repeatRows=1)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#003366")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
+        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
+    ]))
+    content.append(table)
+    content.append(Spacer(1, 0.1*inch))
+
+    # Build the PDF
+    doc.build(content)
+    buffer.seek(0)
+    
+    return buffer
+
+
+def get_pdf_download_link(pdf_buffer, filename="Diagnostic_report.pdf"):
+    """Function to generate downloadable link for PDF"""
+    b64 = base64.b64encode(pdf_buffer.getvalue()).decode()
+    href = f'<a href="data:application/pdf;base64,{b64}" download="{filename}">Download PDF Report</a>'
+    return href
+
 
 # === App Layout ===
 def main():
@@ -609,10 +676,20 @@ def main():
                     display_metrics_for_pillar("Team", stage)
 
                 if st.button("Run Diagnostics", type="primary"):
-                    save_architecture_problems_metrics_input()
+                    metrics_data = save_architecture_problems_metrics_input()
                     logger.info("Run Diagnostics button clicked")
                     st.success("Diagnostic analysis complete!")
 
+                    # Generate PDF report
+                    pdf_buffer = generate_pdf_report(metrics_data)
+                    filename = f"Diagnostic_report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+                        
+                    # Create download link
+                    download_link = get_pdf_download_link(pdf_buffer, filename)
+                    st.markdown(download_link, unsafe_allow_html=True)
+                        
+                    st.info("Click the link above to download your PDF report.")
+                    
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Horizontal line
