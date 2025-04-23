@@ -187,50 +187,40 @@ def display_metrics_for_pillar(architecture_pillar_id,
         container = st.container(border=True)
 
         with container:
-            col1, col2 = st.columns([3, 1])
+            # Video hover functionality
+            if metric['video_link']:
+                video_url = metric['video_link'].replace('watch?v=', 'embed/')
+                with st.popover("📹 Video Guide", help="Click for video tutorial"):
+                    st.video(video_url)
 
-            with col1:
-                # Video hover functionality
-                if metric['video_link']:
-                    video_url = metric['video_link'].replace('watch?v=', 'embed/')
-                    with st.popover("📹 Video Guide", help="Click for video tutorial"):
-                        st.video(video_url)
+            # Metric header
+            st.markdown(f"### {metric['metric_name']}")
 
-                # Metric header
-                st.markdown(f"### {metric['metric_name']}")
+            # Description with read more
+            short_desc = ' '.join(metric['description'].split()[:10]) + '...'
+            if metric['blog_link']:
+                st.markdown(f"{short_desc} [Read More]({metric['blog_link']})")
+            else:
+                st.markdown(short_desc)
 
-                # Description with read more
-                short_desc = ' '.join(metric['description'].split()[:10]) + '...'
-                if metric['blog_link']:
-                    st.markdown(f"{short_desc} [Read More]({metric['blog_link']})")
-                else:
-                    st.markdown(short_desc)
+            # Slider configuration
+            slider_key = f"{pillar_name}_{metric_id}_{metric['metric_name']}"
+            slider_format = get_slider_format(metric['units'])
+            min_val = float(metric['min_value'])
+            max_val = float(metric['max_value'])
+            step_size = get_step_size(metric['units'])
 
-                # Slider configuration
-                slider_key = f"{pillar_name}_{metric_id}_{metric['metric_name']}"
-                slider_format = get_slider_format(metric['units'])
-                min_val = float(metric['min_value'])
-                max_val = float(metric['max_value'])
-                step_size = get_step_size(metric['units'])
-
-                # Slider with improved labeling
-                current_value = st.slider(
-                    label="Adjust your value:",
-                    min_value=min_val,
-                    max_value=max_val,
-                    value=(float(metric['lo_range_value']) + float(metric['hi_range_value'])) / 2,
-                    step=step_size,
-                    format=slider_format,
-                    key=slider_key
-                )
-
-            with col2:
-                # Value ranges in a compact layout
-                st.metric("Target Range",
-                          f"{metric['lo_range_value']} - {metric['hi_range_value']} {metric['units']}")
-                st.metric("Your Value",
-                          f"{current_value} {metric['units']}",
-                          help="Current value based on slider position")
+            # Slider with improved labeling
+            target_range = f"**_{metric['lo_range_value']} - {metric['hi_range_value']} {metric['units']}_**"
+            current_value = st.slider(
+                label=f"The target range is [{target_range}]. What is your value:",
+                min_value=min_val,
+                max_value=max_val,
+                value=(float(metric['lo_range_value']) + float(metric['hi_range_value'])) / 2,
+                step=step_size,
+                format=slider_format,
+                key=slider_key
+            )
 
         st.markdown("---")
 
@@ -401,8 +391,6 @@ def main():
 
         # Add the toolbar
         add_toolbar()
-        # Add logo
-        add_logo(primary_color)
 
         # Rendering UI components
         render_ui_components()

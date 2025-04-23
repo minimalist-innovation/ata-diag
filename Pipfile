@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 numpy = "*"
 scipy = "*"
-streamlit = "*"
+streamlit = "1.44"
 textblob = "*"
 neattext = "*"
 matplotlib = "*"
@@ -19,4 +19,4 @@ toml = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.13"
+python_version = "3.12"
