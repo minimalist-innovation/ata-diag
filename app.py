@@ -190,18 +190,17 @@ def display_metrics_for_pillar(architecture_pillar_id,
             # Video hover functionality
             if metric['video_link']:
                 video_url = metric['video_link'].replace('watch?v=', 'embed/')
-                with st.popover("📹 Video Guide", help="Click for video tutorial"):
+                with st.popover("📹 Video Guide", help=f"Watch a short video about {metric['metric_name']}"):
                     st.video(video_url)
 
             # Metric header
             st.markdown(f"### {metric['metric_name']}")
 
             # Description with read more
-            short_desc = ' '.join(metric['description'].split()[:10]) + '...'
             if metric['blog_link']:
-                st.markdown(f"{short_desc} [Read More]({metric['blog_link']})")
+                st.markdown(f"{metric['description']} _[Learn more]({metric['blog_link']}).._")
             else:
-                st.markdown(short_desc)
+                st.markdown(metric['description'])
 
             # Slider configuration
             slider_key = f"{pillar_name}_{metric_id}_{metric['metric_name']}"

@@ -24,7 +24,6 @@ body, p, div, span, li, td, th, button {
 
 /* Main container constraints */
 .stApp {
-    max-width: 1600px !important;
     margin: 0 auto !important;
     padding: 2rem 1rem !important;
 }
@@ -140,7 +139,6 @@ body, p, div, span, li, td, th, button {
 .footer {
     position: sticky;
     bottom: 0;
-    max-width: 1600px;
     margin: 20px auto 0;
     background-color: #AD244A;
     color: white;
@@ -166,14 +164,12 @@ body, p, div, span, li, td, th, button {
     z-index: 9999;
     background: white;
     margin: 0 auto;
-    max-width: 1600px;
 }
 
 /* Top toolbar */
 .top-toolbar {
     position: sticky;
     top: 0;
-    max-width: 1600px;
     margin: 0 auto;
     background: #AD244A;
     color: white;
@@ -229,7 +225,7 @@ a:hover {
 }
 
 /* Responsive adjustments */
-@media screen and (max-width: 1600px) {
+@media screen {
     .stApp {
         padding: 1.5rem !important;
     }
