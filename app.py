@@ -7,12 +7,6 @@ import logging
 import toml
 import base64
 import io
-from reportlab.lib.pagesizes import letter
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-
 from datetime import datetime
 from db_queries.saas_types import get_saas_types
 from db_queries.orientations import get_orientations
@@ -22,6 +16,7 @@ from db_queries.growth_stages import determine_company_stage
 from db_queries.metrics import get_metrics
 from utils.slider_helpers import get_slider_format, get_step_size
 from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer
+from utils.pdf_report_generators import *
 
 
 # Load and use Streamlit config
@@ -186,7 +181,8 @@ def display_metrics_for_pillar(architecture_pillar_id,
 
     # Get pillar name for display purposes
     pillar_name = get_architecture_pillars().get(architecture_pillar_id, {}).get('pillar_name',
-                                                                                 f"Pillar {architecture_pillar_id}")
+                                                                                 f"Pillar {architecture_pillar_id}")   
+                                                                                                                                                          
     # Display each metric using dictionary values
     for metric_id, metric in metrics_dict.items():
         logger.info(f"Trying to display metric for pillar {architecture_pillar_id}: "
@@ -216,9 +212,9 @@ def display_metrics_for_pillar(architecture_pillar_id,
             min_val = float(metric['min_value'])
             max_val = float(metric['max_value'])
             step_size = get_step_size(metric['units'])
-
+           
             # Slider with improved labeling
-            target_range = f"**_{metric['lo_range_value']} - {metric['hi_range_value']} {metric['units']}_**"
+            target_range = f"{metric['lo_range_value']} - {metric['hi_range_value']} {metric['units']}"
             current_value = st.slider(
                 label=f"The target range is [{target_range}]. What is your value:",
                 min_value=min_val,
@@ -229,94 +225,20 @@ def display_metrics_for_pillar(architecture_pillar_id,
                 key=slider_key
             )
 
+            # Store metrics info in the session_state
+            metric_info = {
+                "slider_key": slider_key,
+                "pillar_name": pillar_name,
+                "unit": metric['units'],
+                "target_low_range": float(metric['lo_range_value']),
+                "target_high_range": float(metric['hi_range_value']),
+                "slider_format": slider_format,
+                "blog_link": metric['blog_link']
+            }
+            # Store the target range separately in session_state
+            st.session_state['metrics_cache'][metric['metric_name']] = metric_info
+      
         st.markdown("---")
-
-
-def save_architecture_problems_metrics_input():
-    """Save architecture problems metrics inputs to memory"""
-    metrics_data = []
-
-    # Iterating widget data from session state and creating metrics_data from it
-    for key, value in st.session_state.items():
-        metric_data = []
-
-        # spliting widget key to get the metric names
-        for name in key.split("_"):
-            if not name.isdigit():
-                metric_data.append(name)
-        
-        metric_data.append(value)
-        metrics_data.append(metric_data)
-
-    return metrics_data
-
-
-def generate_pdf_report(metrics_data):
-    """ generate PDF report format from given metrics data"""
-    buffer = io.BytesIO()
-    
-    # Create the PDF document
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
-    styles = getSampleStyleSheet()
-    
-    # Custom styles
-    title_style = ParagraphStyle(
-        'Title',
-        parent=styles['Heading1'],
-        fontSize=18,
-        spaceAfter=12
-    )
-    
-    heading_style = ParagraphStyle(
-        'Heading',
-        parent=styles['Heading2'],
-        fontSize=14,
-        spaceAfter=6,
-        spaceBefore=12
-    )
-    
-    normal_style = styles['Normal']
-    normal_style.fontSize = 10
-    normal_style.spaceAfter = 6
-    
-    # Build the PDF content
-    content = []
-    
-    # Report header
-    content.append(Paragraph("Diagnostic Report", title_style))
-    content.append(Paragraph(f"Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}", normal_style))
-    content.append(Spacer(1, 0.2*inch))
-    
-    # Architecture_problems_metrics information section
-    content.append(Paragraph("Metrics Information", heading_style))
-    
-    # Get all metrics data
-    report_data = [
-        ["Architecture Pillar", "Growth Stage", "Metric", "Metric Value"]
-    ]
-
-    for metric_info in metrics_data:
-        report_data.append(metric_info)
-
-    table = Table(report_data, repeatRows=1)
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#003366")),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.whitesmoke),
-        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
-    ]))
-    content.append(table)
-    content.append(Spacer(1, 0.1*inch))
-
-    # Build the PDF
-    doc.build(content)
-    buffer.seek(0)
-    
-    return buffer
 
 
 def get_pdf_download_link(pdf_buffer, filename="Diagnostic_report.pdf"):
@@ -326,8 +248,7 @@ def get_pdf_download_link(pdf_buffer, filename="Diagnostic_report.pdf"):
     return href
 
 
-# === App Layout ===
-def main():
+def render_ui_components():
     try:
         logger.debug("Rendering UI components")
 
@@ -344,6 +265,7 @@ def main():
             options=saas_types.keys(),
             format_func=lambda x: saas_types[x]['type_name']
         )
+        selected_saas_type_name = saas_types[selected_saas_type]['type_name']
 
         # Orientation Selection
         orientations = get_orientations()
@@ -352,7 +274,8 @@ def main():
             options=orientations.keys(),
             format_func=lambda x: orientations[x]['orientation_name']
         )
-
+        selected_orientation_name = orientations[selected_orientation]['orientation_name']
+        
         industries = get_industries(selected_saas_type, selected_orientation)
         if not industries:
             st.error("No valid industries found for this combination. Please check your previous selections.")
@@ -362,6 +285,13 @@ def main():
             options=industries.keys(),
             format_func=lambda x: industries[x]['industry_name']
         )
+        selected_industry_name = industries[selected_industry]['industry_name']
+
+        st.session_state.update({
+            'selected_saas_type': selected_saas_type_name,
+            'selected_orientation': selected_orientation_name,
+            'selected_industry': selected_industry_name
+        })
 
         # Ask for company existence duration
         months_existed = st.number_input("How long has your company been in existence? (months)",
@@ -432,39 +362,25 @@ def main():
 
                 # Create tabs for the four pillars
                 logger.debug("Creating pillar tabs")
-                pillars_tabs = st.tabs(["Business/Revenue", "Product", "Systems", "Team"])
+                pillars_data = get_architecture_pillars()  # Returns dict {id: {pillar_name, description}}
 
-                # Business pillar tab
-                with pillars_tabs[0]:
-                    st.markdown(
-                        "**Evaluates your acquisition channels, pricing strategy, customer journey, and revenue resilience to identify patterns limiting growth or creating vulnerability to market shifts.**")
+                # Get ordered pillar IDs based on display_order from SQL query
+                pillar_ids = list(pillars_data.keys())  # Already ordered by display_order from SQL
+                
+                # Create tabs using pillar names in display_order
+                pillar_names = [
+                    " ".join([pillars_data[pid]['display_icon'],
+                              pillars_data[pid]['pillar_name']])
+                    for pid in pillar_ids
+                ]
+                pillars_tabs = st.tabs(pillar_names)
 
-                    logger.debug("Displaying Business pillar metrics")
-                    display_metrics_for_pillar("Business", stage)
-
-                # Product pillar tab
-                with pillars_tabs[1]:
-                    st.markdown(
-                        "**Assesses your product development approach, feedback mechanisms, feature adoption patterns, and market responsiveness to reveal gaps between product evolution and market needs.**")
-
-                    logger.debug("Displaying Product pillar metrics")
-                    display_metrics_for_pillar("Product", stage)
-
-                # Systems pillar tab
-                with pillars_tabs[2]:
-                    st.markdown(
-                        "**Examines your operational processes, technology infrastructure, data accessibility, and technical debt to identify inefficiencies and scalability constraints.**")
-
-                    logger.debug("Displaying Systems pillar metrics")
-                    display_metrics_for_pillar("Systems", stage)
-
-                # Team pillar tab
-                with pillars_tabs[3]:
-                    st.markdown(
-                        "**Explores your decision-making frameworks, information flow patterns, organizational structure, and change management capabilities to uncover bottlenecks limiting adaptive capacity.**")
-
-                    logger.debug("Displaying Team pillar metrics")
-                    display_metrics_for_pillar("Team", stage)
+                # Populate tab content using pillar IDs
+                for i, tab in enumerate(pillars_tabs):
+                    with tab:
+                        current_pillar_id = pillar_ids[i]
+                        st.markdown(f"**{pillars_data[current_pillar_id]['description']}**")
+                        display_metrics_for_pillar(current_pillar_id, current_stage)
 
                 disclaimer_text = f"""
                 This tool is provided for informational and experimental purposes only and is provided 'as is' without warranties of any kind.
@@ -475,22 +391,23 @@ def main():
                     disclaimer_text,
                     icon="⚠️"
                 )
-
+        
                 if st.button("Run Diagnostics", type="primary"):
-                    metrics_data = save_architecture_problems_metrics_input()
-                    logger.info("Run Diagnostics button clicked")
-                    st.success("Diagnostic analysis complete!")
+                    if (selected_saas_type_name, selected_orientation_name, selected_industry_name):
+                        
+                        logger.info("Run Diagnostics button clicked")
+                        st.success("Diagnostic analysis complete!")
 
-                    # Generate PDF report
-                    pdf_buffer = generate_pdf_report(metrics_data)
-                    filename = f"Diagnostic_report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
-                        
-                    # Create download link
-                    download_link = get_pdf_download_link(pdf_buffer, filename)
-                    st.markdown(download_link, unsafe_allow_html=True)
-                        
-                    st.info("Click the link above to download your PDF report.")
-                    
+                        # Generate PDF report
+                        pdf_buffer = generate_pdf_report(stage_name, annual_revenue, pillars_data, st.session_state)
+                        filename = f"Adaptive_Traction_Architecture_Diagnostic_Report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+                            
+                        # Create download link
+                        download_link = get_pdf_download_link(pdf_buffer, filename)
+                        st.markdown(download_link, unsafe_allow_html=True)
+                            
+                        st.info("Click the link above to download your PDF report.")
+
         st.markdown("</div>", unsafe_allow_html=True)
 
         # Horizontal line
@@ -537,3 +454,4 @@ if __name__ == '__main__':
     except Exception as e:
         logger.critical(f"Fatal error in app startup: {str(e)}", exc_info=True)
         st.error(f"Fatal error: {str(e)}")
+
