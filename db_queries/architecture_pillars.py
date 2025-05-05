@@ -12,6 +12,7 @@ def get_architecture_pillars():
             cursor.execute("""
                            SELECT id, pillar_name, description, display_icon
                            FROM architecture_pillars
+                           WHERE enabled = TRUE
                            ORDER BY display_order
                            """)
 
