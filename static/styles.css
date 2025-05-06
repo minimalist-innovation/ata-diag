@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
 /* Headers styling with Montserrat font */
 h1, h2, h3, h4, h5, h6 {
@@ -8,10 +8,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Apply Open Sans to body text */
-body, p, div, span, li, td, th, button {
+body, p, div, span, li, td, th {
     font-size: 16px !important;
     line-height: 1.6em !important;
     font-family: 'Open Sans', sans-serif !important;
+    margin: 0;
+    padding: 0;
 }
 
 /* Custom container styling */
@@ -35,15 +37,14 @@ body, p, div, span, li, td, th, button {
 
 /* === DRY: Shared Primary Button Styles === */
 /* Shared pill button style for primary buttons and link buttons */
-.stButton > button[kind="primary"],
-.stLinkButton a[kind="primary"] {
-    background-color: #AD244A;
+.stButton > button[kind="primary"] {
+    background-color: #c52b4d !important;
     color: white !important;
     border: none;
     border-radius: 999em !important;
     font-family: 'Open Sans', sans-serif !important;
-    font-size: 16px !important;
-    font-weight: 600;
+    font-weight: 800 !important;
+    text-decoration: none !important;
     padding: 0.75em 2.5em; /* Extra horizontal space for icon and text */
     line-height: 1.6em;
     display: inline-flex; /* Use flex for icon + text alignment */
@@ -52,7 +53,6 @@ body, p, div, span, li, td, th, button {
     min-width: 240px; /* Ensures button is long enough for most texts */
     max-width: 100%; /* Responsive: button won't overflow container */
     text-align: center;
-    text-decoration: none !important;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     transition: background 0.2s, color 0.2s;
     cursor: pointer;
@@ -63,10 +63,8 @@ body, p, div, span, li, td, th, button {
 }
 
 /* === DRY: Shared Primary Button Hover Styles === */
-.stButton > button[kind="primary"]:hover,
-.stLinkButton a[kind="primary"]:hover {
-    background-color: #8f1d3e;
-    color: white !important;
+.stButton > button[kind="primary"]:hover {
+    background-color: #a3203e !important;
     border: none;
     text-decoration: none !important;
 }
@@ -84,21 +82,6 @@ body, p, div, span, li, td, th, button {
     border: 1px solid #8f1d3e;
 }
 
-/* Custom styling for secondary link buttons */
-.stLinkButton a[kind="secondary"] {
-    background-color: #f0f2f6;
-    color: #AD244A;
-    border: 1px solid #AD244A;
-    text-decoration: none;
-}
-
-.stLinkButton a[kind="secondary"]:hover {
-    background-color: #e5e7eb;
-    color: #8f1d3e;
-    border: 1px solid #8f1d3e;
-    text-decoration: none;
-}
-
 /* Create hover-like effect for popover trigger */
 .stPopover > div:first-child {
     transition: opacity 0.2s;
@@ -108,6 +91,19 @@ body, p, div, span, li, td, th, button {
 .stPopover > div:first-child:hover {
     opacity: 1;
     cursor: pointer;
+}
+
+/*Styling for tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 25px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    font-size: 24px;
+}
+
+.stTabs [data-baseweb="tab-highlight"] {
+    background-color: #23274d !important;
 }
 
 /* Success & Info messages */
@@ -140,12 +136,12 @@ body, p, div, span, li, td, th, button {
     position: sticky;
     bottom: 0;
     margin: 20px auto 0;
-    background-color: #AD244A;
+    background-color: #23274d !important;
     color: white;
     text-align: center;
-    padding: 10px;
     font-size: 0.8em;
     border-radius: 8px;
+    padding: 1rem 2rem;
 }
 
 .footer-spacer {
@@ -162,7 +158,7 @@ body, p, div, span, li, td, th, button {
     position: sticky;
     top: -1px; /* Compensate for container padding */
     z-index: 9999;
-    background: white;
+    background: white !important;
     margin: 0 auto;
 }
 
@@ -171,8 +167,8 @@ body, p, div, span, li, td, th, button {
     position: sticky;
     top: 0;
     margin: 0 auto;
-    background: #AD244A;
-    color: white;
+    background: #23274d !important;
+    color: white !important;
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -188,11 +184,13 @@ body, p, div, span, li, td, th, button {
     font-size: 1.1em;
     font-weight: 600;
     letter-spacing: 0.02em;
+    background: #23274d !important;
+    color: white !important;
 }
 
 .toolbar-cta {
-    background: white;
-    color: #AD244A !important;
+    background-color: #c52b4d !important;
+    color: white !important;
     border-radius: 999em;
     padding: 0.5em 1.5em;
     font-size: 1em;
@@ -203,11 +201,11 @@ body, p, div, span, li, td, th, button {
     gap: 0.5em;
     transition: background 0.2s, color 0.2s;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
 }
 
 .toolbar-cta:hover {
-    background: #f0f2f6;
-    color: #8f1d3e !important;
+    background-color: #a3203e !important;
 }
 
 .toolbar-spacer {

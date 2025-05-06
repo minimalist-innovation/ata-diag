@@ -2,6 +2,7 @@ import os
 import sys
 import importlib.util
 import streamlit as st
+from jinja2.sandbox import unsafe
 from streamlit import cache_data, cache_resource
 import logging
 import toml
@@ -89,7 +90,7 @@ else:
 # === Page Configuration ===
 st.set_page_config(
     page_title="Adaptive Traction Architecture Diagnostics",
-    page_icon="💸",
+    page_icon="🧬",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -359,7 +360,7 @@ def render_ui_components():
                     icon="⚠️"
                 )
 
-                if st.button("Run Diagnostics", type="primary"):
+                if st.button("**🚀 Run Diagnostics**", type="primary"):
                     logger.info("Run Diagnostics button clicked")
                     st.success("Diagnostic analysis complete!")
 
@@ -387,6 +388,9 @@ def main():
         # Load all the assets
         load_css("static/styles.css")
         load_js("static/script.js")
+
+        # All the logo
+        add_logo(primary_color="#23274d")
 
         # Add the toolbar
         add_toolbar()

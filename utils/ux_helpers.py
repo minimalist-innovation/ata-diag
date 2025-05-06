@@ -28,17 +28,6 @@ def add_footer():
 
 
 def add_toolbar():
-    # st.markdown("""
-    # <style>
-    #     /* Hide Streamlit's default header and menu */
-    #     header, #MainMenu, footer {visibility: hidden;}
-    #
-    #     /* Remove top margin/padding */
-    #     .block-container { padding-top: 0 !important; margin-top: 0 !important; }
-    #     .css-18e3th9 { padding-top: 0 !important; } /* Sometimes needed for newer Streamlit */
-    # </style>
-    # """, unsafe_allow_html=True)
-
     app_toolbar_html = f"""
         <div class="sticky-header">
             <div class="top-toolbar">
