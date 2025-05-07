@@ -282,22 +282,100 @@ section[data-testid="stMain"] > div[data-testid="stMainBlockContainer"] {
     margin-bottom: 80px !important; /* Ensures space for footer */
 }
 
+/* Desktop logo styling */
+.app-logo-desktop-left {
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile logo - hidden by default on desktop */
+.app-logo-mobile {
+    display: none !important;
+    align-items: center;
+    margin: 0.5rem 0;
+}
+
 /* Footer styling */
 .footer {
     position: relative;
     bottom: 0;
+    width: 100%;
     margin: 20px auto 0;
     background-color: var(--color-secondary) !important;
     color: white;
     text-align: center;
-    font-size: 0.8em;
     border-radius: 8px;
-    padding: 1rem 2rem;
+    padding: 1rem;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.footer-main {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.footer-disclaimer {
+    font-size: 0.85em;
+    position: relative;
+    display: inline-block;
 }
 
 .footer-spacer {
     height: 40px;
 }
+
+/* Short disclaimer text */
+.disclaimer-short {
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+    cursor: help;
+    font-style: italic;
+}
+
+/* Full disclaimer that appears on hover */
+.disclaimer-full {
+    visibility: hidden;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    width: 300px;
+    margin-left: -150px;
+    transition: opacity 0.3s;
+    opacity: 0;
+    font-size: 0.85em;
+    line-height: 1.4;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Show the tooltip text when hovering over the container */
+.footer-disclaimer:hover .disclaimer-full {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Arrow for tooltip */
+.disclaimer-full::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+}
+
+/* Improved toolbar for mobile */
+.cta-text {
+    display: inline;
+}
+
 
 /* Remove Streamlit's default padding/margin at the top */
 .block-container {
@@ -429,5 +507,68 @@ a:hover {
     /* Ensure enough space for content on small screens */
     .block-container {
         padding-bottom: 4rem !important;
+    }
+
+    /* Hide desktop columns and show mobile logo */
+    [data-testid="column"] {
+        display: none !important;
+    }
+
+    .app-logo-mobile {
+        display: flex !important;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Hide "Need Clarity?" text on mobile */
+    .mobile-hide {
+        display: none;
+    }
+
+    /* Make CTA button more compact */
+    .toolbar-cta {
+        padding: 0.4em 1em;
+    }
+
+    /* Footer adjustments */
+    .footer {
+        padding: 0.8rem;
+        font-size: 0.8em;
+    }
+
+    /* Adjust tooltip for mobile */
+    .disclaimer-full {
+        width: 240px;
+        margin-left: -120px;
+        font-size: 0.8em;
+        padding: 8px;
+    }
+
+    /* Smaller CTA text */
+    .cta-text {
+        font-size: 0.9em;
+    }
+}
+
+/* Even smaller screens */
+@media screen and (max-width: 480px) {
+    /* Further simplify the logo text */
+    .app-logo-mobile h2 {
+        font-size: 1.2rem !important;
+    }
+
+    .app-logo-mobile h3 {
+        font-size: 0.9rem !important;
+    }
+
+    /* Simplify CTA */
+    .toolbar-cta {
+        padding: 0.3em 0.8em;
+    }
+
+    /* Even smaller tooltip */
+    .disclaimer-full {
+        width: 200px;
+        margin-left: -100px;
     }
 }
