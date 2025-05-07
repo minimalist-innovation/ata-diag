@@ -1,3 +1,4 @@
+import base64
 from datetime import datetime
 import os
 import streamlit as st
@@ -87,7 +88,15 @@ def add_logo(primary_color):
         with col2:
             # Right side: Display company logo if exists
             if os.path.exists(logo_path):
-                st.image(logo_path, width=200)
+                with open(logo_path, "r") as f:
+                    svg = f.read()
+                    b64 = base64.b64encode(svg.encode('utf-8')).decode("utf-8")
+                    html = f"""
+                        <div class="desktop-only-logo">
+                            <img src="data:image/svg+xml;base64,{b64}"/>
+                        </div>
+                        """
+                    st.markdown(html, unsafe_allow_html=True)
             else:
                 st.write("")  # Empty space if logo doesn't exist
 

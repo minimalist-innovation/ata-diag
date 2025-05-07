@@ -451,6 +451,11 @@ a:hover {
     text-decoration: underline;
 }
 
+/* Show logo on desktop */
+.desktop-only-logo {
+    display: block;
+}
+
 /* Responsive adjustments */
 @media screen {
     .stApp {
@@ -548,6 +553,10 @@ a:hover {
     .cta-text {
         font-size: 0.9em;
     }
+
+    .desktop-only-logo {
+        display: none;
+    }
 }
 
 /* Even smaller screens */
@@ -570,5 +579,9 @@ a:hover {
     .disclaimer-full {
         width: 200px;
         margin-left: -100px;
+    }
+
+    .desktop-only-logo {
+        display: none;
     }
 }
