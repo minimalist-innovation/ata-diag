@@ -61,7 +61,7 @@ def add_toolbar():
 
 def add_logo(primary_color):
     try:
-        # Create a container with two columns
+        # Create a container with two columns - these will only be visible on desktop
         col1, col2 = st.columns([3, 1])
 
         # Get the absolute path to the logo
@@ -69,7 +69,7 @@ def add_logo(primary_color):
 
         # Desktop view - both columns
         with col1:
-            # Left side: App logo
+            # Left side: App logo (will be hidden on mobile via CSS)
             app_logo_html = f"""
             <div class="app-logo-desktop-left">
                 <div style="background-color: {primary_color}; width: 40px; height: 40px; border-radius: 8px; 
@@ -85,14 +85,15 @@ def add_logo(primary_color):
             st.markdown(app_logo_html, unsafe_allow_html=True)
 
         with col2:
-            # Right side: Display company logo if exists
+            # Right side: Display company logo if exists (will be hidden on mobile via CSS)
             if os.path.exists(logo_path):
                 st.image(logo_path, width=200)
             else:
                 st.write("")  # Empty space if logo doesn't exist
 
-        # Mobile view - only shown via CSS media query
-        st.markdown(f"""
+        # Mobile view - separate from columns, controlled by CSS media query
+        # This will only be shown on mobile screens
+        mobile_logo_html = f"""
         <div class="app-logo-mobile">
             <div style="background-color: {primary_color}; width: 40px; height: 40px; border-radius: 8px; 
                       display: flex; justify-content: center; align-items: center; margin-right: 12px;">
@@ -103,7 +104,8 @@ def add_logo(primary_color):
                 <h3 style="margin: 0; padding: 0; color: {primary_color};"> Diagnostics</h3>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        """
+        st.markdown(mobile_logo_html, unsafe_allow_html=True)
 
     except Exception as e:
         st.error(f"Error displaying logos: {str(e)}")
