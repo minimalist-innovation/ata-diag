@@ -13,6 +13,7 @@ from db_queries.orientations import get_orientations
 from db_queries.saas_types import get_saas_types
 from utils.slider_helpers import get_slider_format, get_step_size
 from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer
+from utils.pdf_report_generators import *
 
 
 # Load and use Streamlit config
@@ -232,6 +233,13 @@ def display_metrics_for_pillar(architecture_pillar_id, growth_stage_id, saas_typ
         st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
 
 
+def get_pdf_download_link(pdf_buffer, filename="Diagnostic_report.pdf"):
+    """Function to generate downloadable link for PDF"""
+    b64 = base64.b64encode(pdf_buffer.getvalue()).decode()
+    href = f'<a href="data:application/pdf;base64,{b64}" download="{filename}">Download PDF Report</a>'
+    return href
+
+
 def render_ui_components():
     try:
         logger.debug("Rendering UI components")
@@ -366,9 +374,22 @@ def render_ui_components():
                             st.markdown(f"**{pillars_data[current_pillar_id]['description']}**")
                             display_metrics_for_pillar(current_pillar_id, current_stage)
 
+
                     if st.button("**🚀 Run Diagnostics**", type="primary"):
+                    if (selected_saas_type_name, selected_orientation_name, selected_industry_name):
+                        
                         logger.info("Run Diagnostics button clicked")
                         st.success("Diagnostic analysis complete!")
+
+                        # Generate PDF report
+                        pdf_buffer = generate_pdf_report(stage_name, annual_revenue, pillars_data, st.session_state)
+                        filename = f"Adaptive_Traction_Architecture_Diagnostic_Report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+                            
+                        # Create download link
+                        download_link = get_pdf_download_link(pdf_buffer, filename)
+                        st.markdown(download_link, unsafe_allow_html=True)
+                            
+                        st.info("Click the link above to download your PDF report.")
 
         # Horizontal line
         st.markdown("---")
@@ -417,3 +438,4 @@ if __name__ == '__main__':
     except Exception as e:
         logger.critical(f"Fatal error in app startup: {str(e)}", exc_info=True)
         st.error(f"Fatal error: {str(e)}")
+
