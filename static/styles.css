@@ -509,11 +509,12 @@ a:hover {
         padding-bottom: 4rem !important;
     }
 
-    /* Hide desktop columns and show mobile logo */
-    [data-testid="column"] {
+    /* FIXED RULE: Only hide the desktop logo columns */
+    .app-logo-desktop-left {
         display: none !important;
     }
 
+    /* Show mobile logo */
     .app-logo-mobile {
         display: flex !important;
         margin-top: 1rem;
