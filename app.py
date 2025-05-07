@@ -1,18 +1,16 @@
-import os
-import sys
-import importlib.util
-import streamlit as st
-from streamlit import cache_data, cache_resource
 import logging
-import toml
+import os
 
-from datetime import datetime
-from db_queries.saas_types import get_saas_types
-from db_queries.orientations import get_orientations
-from db_queries.industries import get_industries
+import streamlit as st
+import toml
+from streamlit_extras.add_vertical_space import add_vertical_space
+
 from db_queries.architecture_pillars import get_architecture_pillars
 from db_queries.growth_stages import determine_company_stage
+from db_queries.industries import get_industries
 from db_queries.metrics import get_metrics
+from db_queries.orientations import get_orientations
+from db_queries.saas_types import get_saas_types
 from utils.slider_helpers import get_slider_format, get_step_size
 from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer
 
@@ -89,9 +87,14 @@ else:
 # === Page Configuration ===
 st.set_page_config(
     page_title="Adaptive Traction Architecture Diagnostics",
-    page_icon="💸",
-    layout="wide",
+    page_icon="🧬",
+    layout="centered",
     initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2',
+        'Report a bug': "https://www.minimalistinnovation.com/contact",
+        'About': "https://www.minimalistinnovation.com/about"
+    }
 )
 
 # === Custom Theme & Styling ===
@@ -158,12 +161,8 @@ def init_session_state():
             import_and_setup_database()
 
 
-def display_metrics_for_pillar(architecture_pillar_id,
-                               growth_stage_id,
-                               saas_type_id=None,
-                               industry_id=None):
+def display_metrics_for_pillar(architecture_pillar_id, growth_stage_id, saas_type_id=None, industry_id=None):
     logger.info(f"Displaying metrics for pillar {architecture_pillar_id}, growth stage {growth_stage_id}")
-
     # Get metrics dictionary with ID keys
     metrics_dict = get_metrics(
         growth_stage_id=growth_stage_id,
@@ -180,190 +179,196 @@ def display_metrics_for_pillar(architecture_pillar_id,
     # Get pillar name for display purposes
     pillar_name = get_architecture_pillars().get(architecture_pillar_id, {}).get('pillar_name',
                                                                                  f"Pillar {architecture_pillar_id}")
+
     # Display each metric using dictionary values
     for metric_id, metric in metrics_dict.items():
-        logger.info(f"Trying to display metric for pillar {architecture_pillar_id}: "
-                    f"{metric['metric_name']}")
-        container = st.container(border=True)
+        logger.info(f"Trying to display metric for pillar {architecture_pillar_id}: " f"{metric['metric_name']}")
 
-        with container:
-            # Video hover functionality
-            if metric['video_link']:
-                video_url = metric['video_link'].replace('watch?v=', 'embed/')
-                with st.popover("📹 Video Guide", help=f"Watch a short video about {metric['metric_name']}"):
-                    st.video(video_url)
-
+        # Create a container for the metric with border
+        with st.container(border=True):
             # Metric header
-            st.markdown(f"### {metric['metric_name']}")
+            st.markdown(f"## {metric['metric_name']}")
 
-            # Description with read more
-            if metric['blog_link']:
-                st.markdown(f"{metric['description']} _[Learn more]({metric['blog_link']}).._")
-            else:
-                st.markdown(metric['description'])
+            # Create two columns for each metric
+            desc_col, slider_col = st.columns([0.55, 0.45])
 
-            # Slider configuration
-            slider_key = f"{pillar_name}_{metric_id}_{metric['metric_name']}"
-            slider_format = get_slider_format(metric['units'])
-            min_val = float(metric['min_value'])
-            max_val = float(metric['max_value'])
-            step_size = get_step_size(metric['units'])
+            with desc_col:
+                # Description with read more
+                if metric['blog_link']:
+                    st.markdown(f"{metric['description']} _[Learn more]({metric['blog_link']}).._")
+                else:
+                    st.markdown(metric['description'])
 
-            # Slider with improved labeling
-            target_range = f"**_{metric['lo_range_value']} - {metric['hi_range_value']} {metric['units']}_**"
-            current_value = st.slider(
-                label=f"The target range is [{target_range}]. What is your value:",
-                min_value=min_val,
-                max_value=max_val,
-                value=(float(metric['lo_range_value']) + float(metric['hi_range_value'])) / 2,
-                step=step_size,
-                format=slider_format,
-                key=slider_key
-            )
+                # Video hover functionality
+                if metric['video_link']:
+                    video_url = metric['video_link'].replace('watch?v=', 'embed/')
+                    with st.popover("📹 Video Guide", help=f"Watch a short video about {metric['metric_name']}"):
+                        st.video(video_url)
 
-        st.markdown("---")
+            with slider_col:
+                # Slider configuration
+                slider_key = f"{pillar_name}_{metric_id}_{metric['metric_name']}"
+                slider_format = get_slider_format(metric['units'])
+                min_val = float(metric['min_value'])
+                max_val = float(metric['max_value'])
+                step_size = get_step_size(metric['units'])
+
+                # Add slight top padding for better alignment with description
+                st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+
+                # Target range for slider
+                target_range = f"**_{metric['lo_range_value']} - {metric['hi_range_value']} {metric['units']}_**"
+                current_value = st.slider(
+                    label=f"The target range is [{target_range}]. What is your value:",
+                    min_value=min_val,
+                    max_value=max_val,
+                    value=(float(metric['lo_range_value']) + float(metric['hi_range_value'])) / 2,
+                    step=step_size,
+                    format=slider_format,
+                    key=slider_key
+                )
+
+        # Add space between metrics
+        st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
 
 
 def render_ui_components():
     try:
         logger.debug("Rendering UI components")
+        # Create responsive columns with gutters
+        left_gutter, main_content, right_gutter = st.columns([0.05, 0.9, 0.05], gap="small")
 
-        # Basic interactivity for demo purposes
-        st.markdown("<div class='dashboard-container'>", unsafe_allow_html=True)
+        with main_content:
+            # Determine the SaaS Classification
+            st.header("Company Information")
 
-        # Determine the SaaS Classification
-        st.header("Company Information")
+            # Form columns with responsive behavior
+            col1, col2 = st.columns(2, gap="medium")
 
-        # SaaS Type Selection
-        saas_types = get_saas_types()
-        selected_saas_type = st.selectbox(
-            "Select your SaaS company type:",
-            options=saas_types.keys(),
-            format_func=lambda x: saas_types[x]['type_name']
-        )
-
-        # Orientation Selection
-        orientations = get_orientations()
-        selected_orientation = st.selectbox(
-            "Is your company Horizontal or Vertical SaaS?",
-            options=orientations.keys(),
-            format_func=lambda x: orientations[x]['orientation_name']
-        )
-
-        industries = get_industries(selected_saas_type, selected_orientation)
-        if not industries:
-            st.error("No valid industries found for this combination. Please check your previous selections.")
-            return
-        selected_industry = st.selectbox(
-            "Select your primary industry/sector:",
-            options=industries.keys(),
-            format_func=lambda x: industries[x]['industry_name']
-        )
-
-        # Ask for company existence duration
-        months_existed = st.number_input("How long has your company been in existence? (months)",
-                                         min_value=1, max_value=240, value=12)
-        logger.debug(f"Company existence duration input: {months_existed} months")
-
-        # Revenue input based on company age
-        if months_existed < 24:
-            # For newer companies, ask for MRR and convert to ARR
-            mrr = st.slider("**Monthly Recurring Revenue (MRR in \\$K)**",
-                            min_value=0.0,
-                            max_value=1000.0,
-                            value=83.33,  # This equals ~$1M ARR
-                            step=20.83,  # This equals ~$250K ARR (0.25M)
-                            format="$%.2fK")
-
-            # Convert MRR (in thousands) to ARR (in millions)
-            annual_revenue = (mrr * 12) / 1000
-            logger.debug(f"MRR input: ${mrr}K, converted to ARR: ${annual_revenue}M")
-
-            # Display the converted ARR value
-            st.info(f"**Your estimated Annual Recurring Revenue (ARR): __\\${annual_revenue:.2f}M__**")
-        else:
-            # For established companies, ask directly for ARR
-            annual_revenue = st.slider("**Annual Recurring Revenue (ARR in \\$M)**",
-                                       min_value=0.0,
-                                       max_value=12.0,
-                                       value=1.5,
-                                       step=0.25,
-                                       format="$%.2fM")
-            logger.debug(f"ARR input: ${annual_revenue}M")
-
-        # Warning for revenue > 10M
-        if annual_revenue > 10.0:
-            logger.info(f"ARR exceeds $10M: ${annual_revenue}M")
-            st.warning(
-                "Your revenue exceeds \\$10M ARR. This diagnostic tool is primarily designed for companies in the \\$1M-\\$10M ARR range. Some insights may not apply to your current scale.")
-
-        # Determine company stage using the database
-        current_stage = None
-        stage_data = determine_company_stage(annual_revenue)
-        # Handle case where no matching stage found
-        if not stage_data:
-            stage_name = "Undetermined"
-            stage_description = "Could not determine company stage"
-        else:
-            # Extract first (and only) entry from the dictionary
-            stage_id = next(iter(stage_data))  # Get the dictionary key (stage ID)
-            current_stage = stage_id
-            stage_info = stage_data[stage_id]  # Get the nested stage info
-            stage_name = stage_info['growth_stage_name']
-            stage_description = stage_info['description']
-
-        # Display stage with styling based on qualification
-        if stage_name == "Pre-Qualification":
-            logger.info(f"Company stage determined as Pre-Qualification (ARR: ${annual_revenue}M)")
-            st.markdown(f"<div class='error'><strong>Company Stage: {stage_name}</strong><br>{stage_description}</div>",
-                        unsafe_allow_html=True)
-        else:
-            logger.info(f"Company stage determined as {stage_name} (ARR: ${annual_revenue}M)")
-            st.markdown(f"<div class='success'><strong>Company Stage: {stage_name}</strong></div>",
-                        unsafe_allow_html=True)
-            st.markdown(f"<div class='info'>{stage_description}</div>", unsafe_allow_html=True)
-
-            # Only show diagnostic options if qualified
-            if stage_name != "Pre-Qualification":
-                st.markdown("<h4>Four Pillars of Adaptive Traction Architecture</h4>", unsafe_allow_html=True)
-
-                # Create tabs for the four pillars
-                logger.debug("Creating pillar tabs")
-                pillars_data = get_architecture_pillars()  # Returns dict {id: {pillar_name, description}}
-
-                # Get ordered pillar IDs based on display_order from SQL query
-                pillar_ids = list(pillars_data.keys())  # Already ordered by display_order from SQL
-
-                # Create tabs using pillar names in display_order
-                pillar_names = [
-                    " ".join([pillars_data[pid]['display_icon'],
-                              pillars_data[pid]['pillar_name']])
-                    for pid in pillar_ids
-                ]
-                pillars_tabs = st.tabs(pillar_names)
-
-                # Populate tab content using pillar IDs
-                for i, tab in enumerate(pillars_tabs):
-                    with tab:
-                        current_pillar_id = pillar_ids[i]
-                        st.markdown(f"**{pillars_data[current_pillar_id]['description']}**")
-                        display_metrics_for_pillar(current_pillar_id, current_stage)
-
-                disclaimer_text = f"""
-                This tool is provided for informational and experimental purposes only and is provided 'as is' without warranties of any kind.
-                Do not rely solely on the results for business decisions. Always consult with a qualified expert before taking action based on these diagnostics.
-                Use of this tool is at your own risk.
-                """
-                st.warning(
-                    disclaimer_text,
-                    icon="⚠️"
+            with col1:
+                # SaaS Type Selection
+                saas_types = get_saas_types()
+                selected_saas_type = st.selectbox(
+                    "Select your SaaS company type:",
+                    options=saas_types.keys(),
+                    format_func=lambda x: saas_types[x]['type_name']
                 )
 
-                if st.button("Run Diagnostics", type="primary"):
-                    logger.info("Run Diagnostics button clicked")
-                    st.success("Diagnostic analysis complete!")
+                # Orientation Selection
+                orientations = get_orientations()
+                selected_orientation = st.selectbox(
+                    "Is your company Horizontal or Vertical SaaS?",
+                    options=orientations.keys(),
+                    format_func=lambda x: orientations[x]['orientation_name']
+                )
 
-        st.markdown("</div>", unsafe_allow_html=True)
+            with col2:
+                industries = get_industries(selected_saas_type, selected_orientation)
+                if not industries:
+                    st.error("No valid industries found for this combination. Please check your previous selections.")
+                    return
+                selected_industry = st.selectbox(
+                    "Select your primary industry/sector:",
+                    options=industries.keys(),
+                    format_func=lambda x: industries[x]['industry_name']
+                )
+
+                # Ask for company existence duration
+                months_existed = st.number_input("How long has your company been in existence? (months)",
+                                                 min_value=1, max_value=240, value=12)
+                logger.debug(f"Company existence duration input: {months_existed} months")
+
+                # Revenue input based on company age
+                if months_existed < 24:
+                    # For newer companies, ask for MRR and convert to ARR
+                    mrr = st.slider("**Monthly Recurring Revenue (MRR in \\$K)**",
+                                    min_value=0.0,
+                                    max_value=1000.0,
+                                    value=83.33,  # This equals ~$1M ARR
+                                    step=20.83,  # This equals ~$250K ARR (0.25M)
+                                    format="$%.2fK")
+
+                    # Convert MRR (in thousands) to ARR (in millions)
+                    annual_revenue = (mrr * 12) / 1000
+                    logger.debug(f"MRR input: ${mrr}K, converted to ARR: ${annual_revenue}M")
+
+                    add_vertical_space(3)
+
+                    # Display the converted ARR value
+                    st.info(f"**Your estimated Annual Recurring Revenue (ARR): __\\${annual_revenue:.2f}M__**")
+                else:
+                    # For established companies, ask directly for ARR
+                    annual_revenue = st.slider("**Annual Recurring Revenue (ARR in \\$M)**",
+                                               min_value=0.0,
+                                               max_value=12.0,
+                                               value=1.5,
+                                               step=0.25,
+                                               format="$%.2fM")
+                    logger.debug(f"ARR input: ${annual_revenue}M")
+
+                    add_vertical_space(3)
+                    # Warning for revenue > 10M
+                    if annual_revenue > 10.0:
+                        logger.info(f"ARR exceeds $10M: ${annual_revenue}M")
+                        st.warning(
+                            "Your revenue exceeds \\$10M ARR. This diagnostic tool is primarily designed for companies in the \\$1M-\\$10M ARR range. Some insights may not apply to your current scale.")
+
+            # Determine company stage using the database
+            current_stage = None
+            stage_data = determine_company_stage(annual_revenue)
+            # Handle case where no matching stage found
+            if not stage_data:
+                stage_name = "Undetermined"
+                stage_description = "Could not determine company stage"
+            else:
+                # Extract first (and only) entry from the dictionary
+                stage_id = next(iter(stage_data))  # Get the dictionary key (stage ID)
+                current_stage = stage_id
+                stage_info = stage_data[stage_id]  # Get the nested stage info
+                stage_name = stage_info['growth_stage_name']
+                stage_description = stage_info['description']
+
+            # Display stage with styling based on qualification
+            if stage_name == "Pre-Qualification":
+                logger.info(f"Company stage determined as Pre-Qualification (ARR: ${annual_revenue}M)")
+                st.markdown(f"<div class='error'><strong>Company Stage: {stage_name}</strong></div>",
+                            unsafe_allow_html=True)
+                st.markdown(f"<div class='info'>{stage_description}</div>", unsafe_allow_html=True)
+            else:
+                logger.info(f"Company stage determined as {stage_name} (ARR: ${annual_revenue}M)")
+                st.markdown(f"<div class='success'><strong>Company Stage: {stage_name}</strong></div>",
+                            unsafe_allow_html=True)
+                st.markdown(f"<div class='info'>{stage_description}</div>", unsafe_allow_html=True)
+
+                # Only show diagnostic options if qualified
+                if stage_name != "Pre-Qualification":
+                    st.markdown("<h4>Four Pillars of Adaptive Traction Architecture</h4>", unsafe_allow_html=True)
+
+                    # Create tabs for the four pillars
+                    logger.debug("Creating pillar tabs")
+                    pillars_data = get_architecture_pillars()  # Returns dict {id: {pillar_name, description}}
+
+                    # Get ordered pillar IDs based on display_order from SQL query
+                    pillar_ids = list(pillars_data.keys())  # Already ordered by display_order from SQL
+
+                    # Create tabs using pillar names in display_order
+                    pillar_names = [
+                        " ".join([pillars_data[pid]['display_icon'],
+                                  pillars_data[pid]['pillar_name']])
+                        for pid in pillar_ids
+                    ]
+                    pillars_tabs = st.tabs(pillar_names)
+
+                    # Populate tab content using pillar IDs
+                    for i, tab in enumerate(pillars_tabs):
+                        with tab:
+                            current_pillar_id = pillar_ids[i]
+                            st.markdown(f"**{pillars_data[current_pillar_id]['description']}**")
+                            display_metrics_for_pillar(current_pillar_id, current_stage)
+
+                    if st.button("**🚀 Run Diagnostics**", type="primary"):
+                        logger.info("Run Diagnostics button clicked")
+                        st.success("Diagnostic analysis complete!")
 
         # Horizontal line
         st.markdown("---")
@@ -387,6 +392,9 @@ def main():
         # Load all the assets
         load_css("static/styles.css")
         load_js("static/script.js")
+
+        # All the logo
+        add_logo(primary_color="#23274d")
 
         # Add the toolbar
         add_toolbar()

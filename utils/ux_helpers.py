@@ -20,25 +20,19 @@ def load_js(file_path):
 def add_footer():
     # Copyright footer with dynamically generated year
     current_year = datetime.now().year
+    st.markdown('<div class="content-wrapper"></div>', unsafe_allow_html=True)
     st.markdown(f"""
     <div class="footer">
-        © {current_year} Minimalist Innovation LLC. All rights reserved.
+        © {current_year} Minimalist Innovation LLC. All rights reserved. <br>
+        This tool is provided for informational and experimental purposes only and is
+        provided 'as is' without warranties of any kind. Do not rely solely on the results for
+        business decisions. Always consult with a qualified expert before taking action based
+        on these diagnostics. Use of this tool is at your own risk.
     </div>
     """, unsafe_allow_html=True)
 
 
 def add_toolbar():
-    # st.markdown("""
-    # <style>
-    #     /* Hide Streamlit's default header and menu */
-    #     header, #MainMenu, footer {visibility: hidden;}
-    #
-    #     /* Remove top margin/padding */
-    #     .block-container { padding-top: 0 !important; margin-top: 0 !important; }
-    #     .css-18e3th9 { padding-top: 0 !important; } /* Sometimes needed for newer Streamlit */
-    # </style>
-    # """, unsafe_allow_html=True)
-
     app_toolbar_html = f"""
         <div class="sticky-header">
             <div class="top-toolbar">
