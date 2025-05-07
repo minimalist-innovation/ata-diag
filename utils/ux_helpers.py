@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import os
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -18,29 +18,40 @@ def load_js(file_path):
 
 
 def add_footer():
+    """Responsive footer with hover-based disclaimer"""
     # Copyright footer with dynamically generated year
     current_year = datetime.now().year
+
+    # Create a cleaner, more mobile-friendly footer
     st.markdown('<div class="content-wrapper"></div>', unsafe_allow_html=True)
-    st.markdown(f"""
+
+    footer_html = f"""
     <div class="footer">
-        © {current_year} Minimalist Innovation LLC. All rights reserved. <br>
-        This tool is provided for informational and experimental purposes only and is
-        provided 'as is' without warranties of any kind. Do not rely solely on the results for
-        business decisions. Always consult with a qualified expert before taking action based
-        on these diagnostics. Use of this tool is at your own risk.
+        <div class="footer-main">© {current_year} Minimalist Innovation LLC. All rights reserved.</div>
+        <div class="footer-disclaimer">
+            <span class="disclaimer-short">Use of this tool is at your own risk.</span>
+            <span class="disclaimer-full">
+                This tool is provided for informational and experimental purposes only and is
+                provided 'as is' without warranties of any kind. Do not rely solely on the results for
+                business decisions. Always consult with a qualified expert before taking action based
+                on these diagnostics.
+            </span>
+        </div>
     </div>
-    """, unsafe_allow_html=True)
+    """
+
+    st.markdown(footer_html, unsafe_allow_html=True)
 
 
 def add_toolbar():
     app_toolbar_html = f"""
         <div class="sticky-header">
             <div class="top-toolbar">
-                <span class="toolbar-text">Need Clarity?</span>
+                <span class="toolbar-text mobile-hide">Need Clarity?</span>
                 <a href="https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2" 
                     class="toolbar-cta" 
                     target="_blank">
-                    🤙 Schedule a Call Now
+                    🤙 <span class="cta-text">Schedule a Call</span>
                 </a>
             </div>
         </div>
@@ -48,16 +59,19 @@ def add_toolbar():
     st.markdown(app_toolbar_html, unsafe_allow_html=True)
 
 
-# === Helper Functions ===
 def add_logo(primary_color):
     try:
         # Create a container with two columns
         col1, col2 = st.columns([3, 1])
 
+        # Get the absolute path to the logo
+        logo_path = os.path.join("media", "Minimalist_Horizontal_Blue.svg")
+
+        # Desktop view - both columns
         with col1:
-            # Left side: App logo (existing)
+            # Left side: App logo
             app_logo_html = f"""
-            <div style="display: flex; align-items: center;">
+            <div class="app-logo-desktop-left">
                 <div style="background-color: {primary_color}; width: 40px; height: 40px; border-radius: 8px; 
                           display: flex; justify-content: center; align-items: center; margin-right: 12px;">
                     <span style="color: white; font-weight: bold; font-size: 18px;">ATA</span>
@@ -71,15 +85,25 @@ def add_logo(primary_color):
             st.markdown(app_logo_html, unsafe_allow_html=True)
 
         with col2:
-            # Right side: Company logo using st.image
-            import os
-            from PIL import Image
+            # Right side: Display company logo if exists
+            if os.path.exists(logo_path):
+                st.image(logo_path, width=200)
+            else:
+                st.write("")  # Empty space if logo doesn't exist
 
-            # Path to your SVG logo
-            logo_path = os.path.join("media", "Minimalist_Horizontal_Blue.svg")
-
-            # Display the logo - align it to the right
-            st.image(logo_path, width=200)  # Adjust width as needed
+        # Mobile view - only shown via CSS media query
+        st.markdown(f"""
+        <div class="app-logo-mobile">
+            <div style="background-color: {primary_color}; width: 40px; height: 40px; border-radius: 8px; 
+                      display: flex; justify-content: center; align-items: center; margin-right: 12px;">
+                <span style="color: white; font-weight: bold; font-size: 18px;">ATA</span>
+            </div>
+            <div>
+                <h2 style="margin: 0; padding: 0; color: {primary_color};">Adaptive Traction Architecture</h2>
+                <h3 style="margin: 0; padding: 0; color: {primary_color};"> Diagnostics</h3>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     except Exception as e:
         st.error(f"Error displaying logos: {str(e)}")
