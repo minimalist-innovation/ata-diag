@@ -4,6 +4,7 @@ import os
 import streamlit as st
 import toml
 from streamlit_extras.add_vertical_space import add_vertical_space
+from streamlit_extras.switch_page_button import switch_page
 
 from db_queries.architecture_pillars import get_architecture_pillars
 from db_queries.growth_stages import determine_company_stage
@@ -14,6 +15,7 @@ from db_queries.saas_types import get_saas_types
 from utils.slider_helpers import get_slider_format, get_step_size
 from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer
 from utils.pdf_report_generators import *
+import base64
 
 
 # Load and use Streamlit config
@@ -229,6 +231,19 @@ def display_metrics_for_pillar(architecture_pillar_id, growth_stage_id, saas_typ
                     key=slider_key
                 )
 
+                # Store metrics info in the session_state
+                metric_info = {
+                    "slider_key": slider_key,
+                    "pillar_name": pillar_name,
+                    "unit": metric['units'],
+                    "target_low_range": float(metric['lo_range_value']),
+                    "target_high_range": float(metric['hi_range_value']),
+                    "slider_format": slider_format,
+                    "blog_link": metric['blog_link']
+                }
+                # Store the target range separately in session_state
+                st.session_state['metrics_cache'][metric['metric_name']] = metric_info
+
         # Add space between metrics
         st.markdown("<div style='margin-bottom: 20px;'></div>", unsafe_allow_html=True)
 
@@ -270,6 +285,11 @@ def render_ui_components():
                     format_func=lambda x: orientations[x]['orientation_name']
                 )
 
+                st.session_state.update({
+                    'selected_saas_type': saas_types[selected_saas_type]['type_name'],
+                    'selected_orientation': orientations[selected_orientation]['orientation_name']
+                })
+
             with col2:
                 industries = get_industries(selected_saas_type, selected_orientation)
                 if not industries:
@@ -280,7 +300,9 @@ def render_ui_components():
                     options=industries.keys(),
                     format_func=lambda x: industries[x]['industry_name']
                 )
-
+                st.session_state.update({
+                    'selected_industry': industries[selected_industry]['industry_name']
+                })
                 # Ask for company existence duration
                 months_existed = st.number_input("How long has your company been in existence? (months)",
                                                  min_value=1, max_value=240, value=12)
@@ -321,6 +343,8 @@ def render_ui_components():
                         st.warning(
                             "Your revenue exceeds \\$10M ARR. This diagnostic tool is primarily designed for companies in the \\$1M-\\$10M ARR range. Some insights may not apply to your current scale.")
 
+            st.session_state["annual_revenue"] = annual_revenue
+
             # Determine company stage using the database
             current_stage = None
             stage_data = determine_company_stage(annual_revenue)
@@ -335,6 +359,7 @@ def render_ui_components():
                 stage_info = stage_data[stage_id]  # Get the nested stage info
                 stage_name = stage_info['growth_stage_name']
                 stage_description = stage_info['description']
+            st.session_state["growth_stage_name"] = stage_name
 
             # Display stage with styling based on qualification
             if stage_name == "Pre-Qualification":
@@ -355,6 +380,7 @@ def render_ui_components():
                     # Create tabs for the four pillars
                     logger.debug("Creating pillar tabs")
                     pillars_data = get_architecture_pillars()  # Returns dict {id: {pillar_name, description}}
+                    st.session_state["pillars_data"] = pillars_data
 
                     # Get ordered pillar IDs based on display_order from SQL query
                     pillar_ids = list(pillars_data.keys())  # Already ordered by display_order from SQL
@@ -372,24 +398,21 @@ def render_ui_components():
                         with tab:
                             current_pillar_id = pillar_ids[i]
                             st.markdown(f"**{pillars_data[current_pillar_id]['description']}**")
-                            display_metrics_for_pillar(current_pillar_id, current_stage)
+                            display_metrics_for_pillar(current_pillar_id, current_stage, selected_saas_type, selected_industry)
 
 
-                    if st.button("**🚀 Run Diagnostics**", type="primary"):
-                    if (selected_saas_type_name, selected_orientation_name, selected_industry_name):
-                        
-                        logger.info("Run Diagnostics button clicked")
-                        st.success("Diagnostic analysis complete!")
+                    st.button("**🚀 Run Diagnostics**", type="primary", on_click=run_diagnostics)
+                    logger.info("Run Diagnostics button clicked")
+                    st.success("Diagnostic analysis complete!")
 
-                        # Generate PDF report
-                        pdf_buffer = generate_pdf_report(stage_name, annual_revenue, pillars_data, st.session_state)
-                        filename = f"Adaptive_Traction_Architecture_Diagnostic_Report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
-                            
-                        # Create download link
-                        download_link = get_pdf_download_link(pdf_buffer, filename)
-                        st.markdown(download_link, unsafe_allow_html=True)
-                            
-                        st.info("Click the link above to download your PDF report.")
+                    # if st.session_state.get('report_buffer') is not None:
+                    #     pdf_buffer = st.session_state.get('report_buffer')
+                    #     filename = f"Adaptive_Traction_Architecture_Diagnostic_Report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+                    #     # Create download link
+                    #     download_link = get_pdf_download_link(pdf_buffer, filename)
+                    #     st.markdown(download_link, unsafe_allow_html=True)
+                                
+                    #     st.info("Click the link above to download your PDF report.")
 
         # Horizontal line
         st.markdown("---")
@@ -401,6 +424,10 @@ def render_ui_components():
         st.error(f"An error occurred: {str(e)}")
         st.info("Please refresh the page and try again.")
 
+# Run diagnostics on click
+def run_diagnostics():
+    # Generate PDF report
+    st.session_state["page"] = "report"
 
 # === App Layout ===
 def main():
@@ -420,8 +447,14 @@ def main():
         # Add the toolbar
         add_toolbar()
 
-        # Rendering UI components
-        render_ui_components()
+        if "page" not in st.session_state:
+            st.session_state["page"] = "home"
+        
+        if st.session_state["page"] == "report":
+            render_streamlit_report(st.session_state)
+        else:
+            # Rendering UI components   
+            render_ui_components()
 
         # Add footer
         add_footer()
