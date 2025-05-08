@@ -398,8 +398,8 @@ def render_ui_components():
                         with tab:
                             current_pillar_id = pillar_ids[i]
                             st.markdown(f"**{pillars_data[current_pillar_id]['description']}**")
-                            display_metrics_for_pillar(current_pillar_id, current_stage, selected_saas_type, selected_industry)
-
+                            display_metrics_for_pillar(current_pillar_id, current_stage, selected_saas_type,
+                                                       selected_industry)
 
                     st.button("**🚀 Run Diagnostics**", type="primary", on_click=run_diagnostics)
                     logger.info("Run Diagnostics button clicked")
@@ -411,7 +411,7 @@ def render_ui_components():
                     #     # Create download link
                     #     download_link = get_pdf_download_link(pdf_buffer, filename)
                     #     st.markdown(download_link, unsafe_allow_html=True)
-                                
+
                     #     st.info("Click the link above to download your PDF report.")
 
         # Horizontal line
@@ -424,10 +424,12 @@ def render_ui_components():
         st.error(f"An error occurred: {str(e)}")
         st.info("Please refresh the page and try again.")
 
+
 # Run diagnostics on click
 def run_diagnostics():
     # Generate PDF report
     st.session_state["page"] = "report"
+
 
 # === App Layout ===
 def main():
@@ -449,7 +451,7 @@ def main():
 
         if "page" not in st.session_state:
             st.session_state["page"] = "home"
-        
+
         if st.session_state["page"] == "report":
             render_streamlit_report(st.session_state)
         else:
@@ -471,4 +473,3 @@ if __name__ == '__main__':
     except Exception as e:
         logger.critical(f"Fatal error in app startup: {str(e)}", exc_info=True)
         st.error(f"Fatal error: {str(e)}")
-
