@@ -376,20 +376,19 @@ def render_ui_components():
 
 
                     if st.button("**🚀 Run Diagnostics**", type="primary"):
-                    if (selected_saas_type_name, selected_orientation_name, selected_industry_name):
-                        
-                        logger.info("Run Diagnostics button clicked")
-                        st.success("Diagnostic analysis complete!")
+                        if (selected_saas_type_name, selected_orientation_name, selected_industry_name):
+                            logger.info("Run Diagnostics button clicked")
+                            st.success("Diagnostic analysis complete!")
 
-                        # Generate PDF report
-                        pdf_buffer = generate_pdf_report(stage_name, annual_revenue, pillars_data, st.session_state)
-                        filename = f"Adaptive_Traction_Architecture_Diagnostic_Report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
-                            
-                        # Create download link
-                        download_link = get_pdf_download_link(pdf_buffer, filename)
-                        st.markdown(download_link, unsafe_allow_html=True)
-                            
-                        st.info("Click the link above to download your PDF report.")
+                            # Generate PDF report
+                            pdf_buffer = generate_pdf_report(stage_name, annual_revenue, pillars_data, st.session_state)
+                            filename = f"Adaptive_Traction_Architecture_Diagnostic_Report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
+
+                            # Create download link
+                            download_link = get_pdf_download_link(pdf_buffer, filename)
+                            st.markdown(download_link, unsafe_allow_html=True)
+
+                            st.info("Click the link above to download your PDF report.")
 
         # Horizontal line
         st.markdown("---")

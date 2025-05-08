@@ -10,10 +10,18 @@ def get_all_metrics():
     try:
         with conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id,metric_name,description,blog_link,video_link,units FROM metrics").fetchall()
+            cursor.execute("SELECT "
+                           "id,"
+                           "metric_name,"
+                           "metric_type_id,"
+                           "description,"
+                           "blog_link,"
+                           "video_link,"
+                           "units FROM metrics").fetchall()
             metrics_dict = {
                 row['id']: {
                     'metric_name': row['metric_name'],
+                    'metric_type_id': row['metric_type_id'],
                     'description': row['description'],
                     'blog_link': row['blog_link'],
                     'video_link': row['video_link'],
@@ -52,9 +60,12 @@ def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, indu
                        agsma.min_value,
                        agsma.max_value,
                        agsma.lo_range_value,
-                       agsma.hi_range_value
+                       agsma.hi_range_value,
+                       m.metric_type_id,
+                       mt.type_name
                 FROM architecture_growth_stage_metric_associations agsma
                          JOIN metrics m ON agsma.metric_id = m.id
+                         JOIN metrics_type mt ON m.metric_type_id = mt.id
                 WHERE agsma.growth_stage_id = ?
                   AND agsma.architecture_pillar_id = ?
                 """
@@ -77,6 +88,8 @@ def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, indu
             metrics_dict = {
                 row['id']: {
                     'metric_name': row['metric_name'],
+                    'metric_type_id': row['metric_type_id'],
+                    'metric_type_name': row['type_name'],
                     'description': row['description'],
                     'blog_link': row['blog_link'],
                     'video_link': row['video_link'],
