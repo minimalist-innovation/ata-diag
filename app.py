@@ -213,7 +213,9 @@ def display_metrics_for_pillar(architecture_pillar_id, growth_stage_id, saas_typ
                     "target_low_range": float(metric['lo_range_value']),
                     "target_high_range": float(metric['hi_range_value']),
                     "slider_format": slider_format,
-                    "blog_link": metric['blog_link']
+                    "blog_link": metric['blog_link'],
+                    "video_link": metric['video_link'],
+                    "key_takeaways": metric['key_takeaways'],
                 }
                 # Store the target range separately in session_state
                 st.session_state['metrics_cache'][metric['metric_name']] = metric_info
@@ -375,19 +377,9 @@ def render_ui_components():
                             display_metrics_for_pillar(current_pillar_id, current_stage, selected_saas_type,
                                                        selected_industry)
 
-                    st.button("**🚀 Run Diagnostics**", type="primary", on_click=run_diagnostics)
-                    logger.info("Run Diagnostics button clicked")
-                    st.success("Diagnostic analysis complete!")
-
-                    # if st.session_state.get('report_buffer') is not None:
-                    #     pdf_buffer = st.session_state.get('report_buffer')
-                    #     filename = f"Adaptive_Traction_Architecture_Diagnostic_Report_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
-                    #     # Create download link
-                    #     download_link = get_pdf_download_link(pdf_buffer, filename)
-                    #     st.markdown(download_link, unsafe_allow_html=True)
-
-                    #     st.info("Click the link above to download your PDF report.")
-
+            
+            st.button("**🚀 Run Diagnostics**", type="primary", on_click=run_diagnostics)
+                
         # Horizontal line
         st.markdown("---")
 
@@ -401,9 +393,11 @@ def render_ui_components():
 
 # Run diagnostics on click
 def run_diagnostics():
-    # Generate PDF report
+    # show report page
+    logger.info("Run Diagnostics button clicked")
+    st.success("Diagnostic analysis complete!")
     st.session_state["page"] = "report"
-    show_cta_modal()
+    
 
 
 # === App Layout ===
@@ -429,6 +423,7 @@ def main():
 
         if st.session_state["page"] == "report":
             render_streamlit_report(st.session_state)
+            # show_cta_modal()
         else:
             # Rendering UI components   
             render_ui_components()
