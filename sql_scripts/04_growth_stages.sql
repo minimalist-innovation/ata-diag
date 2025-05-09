@@ -1,36 +1,30 @@
 CREATE TABLE IF NOT EXISTS growth_stages
 (
     id
-    INTEGER
-    PRIMARY
-    KEY,
+               INTEGER
+        PRIMARY
+            KEY,
     growth_stage_name
-    TEXT
-    NOT
-    NULL,
+               TEXT
+                      NOT
+                          NULL,
     description
-    TEXT
-    NOT
-    NULL,
+               TEXT
+                      NOT
+                          NULL,
     low_range
-    DECIMAL
-(
-    10,
-    2
-) NOT NULL,
-    high_range DECIMAL
-(
-    10,
-    2
-) NOT NULL
-    );
+               DECIMAL(10,
+                   2) NOT NULL,
+    high_range DECIMAL(10,
+                   2) NOT NULL
+);
 
 DELETE
 FROM growth_stages;
 
 INSERT INTO growth_stages
 VALUES (1, 'Pre-Qualification',
-        'Your company is still in the early stages with less than $1M ARR. This diagnostics tool is designed for companies with $1M+ ARR. We recommend focusing on product-market fit and initial traction before using this diagnostic tool.',
+        'Your company is still in early stages (under $1M ARR). While this tool is for more established businesses, we''ve created something specifically for you. Download our <a href="https://minimalistinnovation.com/book">free e-book</a> now to master product-market fit and prepare for your next growth phase.',
         0.00, 1.00),
        (2, 'Validation Seekers',
         'Your company is in the Validation Seekers stage ($1M-$2M ARR). At this stage, you''re likely establishing early monetization with some paying customers, but may be encountering your first serious growth plateau or realizing early traction was a false signal.',
