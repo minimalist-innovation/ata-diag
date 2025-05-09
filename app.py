@@ -395,7 +395,6 @@ def render_ui_components():
 def run_diagnostics():
     # show report page
     logger.info("Run Diagnostics button clicked")
-    st.success("Diagnostic analysis complete!")
     st.session_state["page"] = "report"
     
 
