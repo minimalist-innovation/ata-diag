@@ -1,10 +1,9 @@
+import base64
 import logging
 import os
 
-import streamlit as st
 import toml
 from streamlit_extras.add_vertical_space import add_vertical_space
-from streamlit_extras.switch_page_button import switch_page
 
 from db_queries.architecture_pillars import get_architecture_pillars
 from db_queries.growth_stages import determine_company_stage
@@ -12,10 +11,9 @@ from db_queries.industries import get_industries
 from db_queries.metrics import get_metrics
 from db_queries.orientations import get_orientations
 from db_queries.saas_types import get_saas_types
-from utils.slider_helpers import get_slider_format, get_step_size
-from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer
 from utils.pdf_report_generators import *
-import base64
+from utils.slider_helpers import get_slider_format, get_step_size
+from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer, show_cta_modal
 
 
 # Load and use Streamlit config
@@ -106,32 +104,8 @@ try:
     config_path = os.path.join('.streamlit', 'config.toml')
     if os.path.exists(config_path):
         config = toml.load(config_path)
-        color_config = config.get('colors', {})
-
-        # Get colors from config or use defaults
-        primary_color = color_config.get('primaryColor', "#233292")
-        secondary_color = color_config.get('secondaryColor', "#26619C")
-        tertiary_color = color_config.get('tertiaryColor', "#385424")
-        quaternary_color = color_config.get('quaternaryColor', "#4D466B")
-        highlight_color = color_config.get('highlightColor', "#AC2147")
-        link_color = color_config.get('linkColor', "#00A8A8")
-    else:
-        # Default colors
-        primary_color = "#233292"  # Deep blue
-        secondary_color = "#26619C"  # Medium blue
-        tertiary_color = "#385424"  # Forest green
-        quaternary_color = "#4D466B"  # Purple-gray
-        highlight_color = "#AC2147"  # Red highlight
-        link_color = "#00A8A8"  # Teal for hyperlinks
 except Exception as e:
-    logger.warning(f"Could not load colors from config, using defaults: {str(e)}")
-    # Default colors
-    primary_color = "#233292"  # Deep blue
-    secondary_color = "#26619C"  # Medium blue
-    tertiary_color = "#385424"  # Forest green
-    quaternary_color = "#4D466B"  # Purple-gray
-    highlight_color = "#AC2147"  # Red highlight
-    link_color = "#00A8A8"  # Teal for hyperlinks
+    logger.warning(f"Could not load the configuration file: {str(e)}")
 
 
 def import_and_setup_database():
@@ -366,7 +340,7 @@ def render_ui_components():
                 logger.info(f"Company stage determined as Pre-Qualification (ARR: ${annual_revenue}M)")
                 st.markdown(f"<div class='error'><strong>Company Stage: {stage_name}</strong></div>",
                             unsafe_allow_html=True)
-                st.markdown(f"<div class='info'>{stage_description}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='disqualinfo'>{stage_description}</div>", unsafe_allow_html=True)
             else:
                 logger.info(f"Company stage determined as {stage_name} (ARR: ${annual_revenue}M)")
                 st.markdown(f"<div class='success'><strong>Company Stage: {stage_name}</strong></div>",
@@ -429,6 +403,7 @@ def render_ui_components():
 def run_diagnostics():
     # Generate PDF report
     st.session_state["page"] = "report"
+    show_cta_modal()
 
 
 # === App Layout ===
