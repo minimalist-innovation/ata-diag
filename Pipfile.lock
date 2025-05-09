@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a081a37ed34f0f184edd64d2ab01edfb3c2f673770e88fa1ef019d7b431ec2b6"
+            "sha256": "7c271bdbff67d12def957a7d3e397f8a356976b92f37a286d90da23deab90756"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1547,6 +1547,15 @@
             ],
             "markers": "python_version >= '3.5'",
             "version": "==4.0.2"
+        },
+        "st-click-detector": {
+            "hashes": [
+                "sha256:10ab24a2167fe7c8abca3db6c9f149af2d0cadc0014091eaa8f1b045079199f2",
+                "sha256:984fccb56364af5c51dc01c1fbc46d55a14dcc5de6d18668a01461da5f2aca15"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.6'",
+            "version": "==0.1.3"
         },
         "st-theme": {
             "hashes": [

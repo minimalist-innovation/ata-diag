@@ -65,7 +65,7 @@ def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, indu
                        mt.type_name
                 FROM architecture_growth_stage_metric_associations agsma
                          JOIN metrics m ON agsma.metric_id = m.id
-                         JOIN metrics_type mt ON m.metric_type_id = mt.id
+                         JOIN metric_types mt ON m.metric_type_id = mt.id
                 WHERE agsma.growth_stage_id = ?
                   AND agsma.architecture_pillar_id = ?
                 """

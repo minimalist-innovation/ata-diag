@@ -47,8 +47,8 @@ def setup_database(conn=None):
             'sql_scripts/05_architecture_pillars.sql',
             'sql_scripts/06_metric_types.sql',
             'sql_scripts/07_metrics.sql',
-            'sql_scripts/08_industry_mappings.sql'
-            'sql_scripts/09_architecture_growth_stage_metric_associations.sql',
+            'sql_scripts/08_industry_mappings.sql',
+            'sql_scripts/09_architecture_growth_stage_metric_associations.sql'
         ]
 
         # Execute all SQL files
