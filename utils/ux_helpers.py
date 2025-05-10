@@ -1,9 +1,10 @@
 import base64
-from datetime import datetime
 import os
+import time
+from datetime import datetime
+
 import streamlit as st
 import streamlit.components.v1 as components
-from st_click_detector import click_detector
 
 
 # Load CSS Dynamically
@@ -46,19 +47,27 @@ def add_footer():
 
 
 def add_toolbar():
+    # Create a placeholder for the toolbar
+    toolbar_placeholder = st.empty()
+
+    button_text = "🤙  Book Your FREE Startup Metrics Review Call"
+    if st.session_state.get("diagnostics_run", True):
+        button_text = "✅ Expert Analysis of Your Metrics - Book Your FREE Call"
+
     app_toolbar_html = f"""
         <div class="sticky-header">
             <div class="top-toolbar">
-                <span class="toolbar-text mobile-hide">Need Clarity?</span>
                 <a href="https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2" 
                     class="toolbar-cta" 
                     target="_blank">
-                    🤙 <span class="cta-text">Schedule a Call</span>
+                    <span class="cta-text">{button_text}</span>
                 </a>
             </div>
+            <div class="toolbar-spacer"></div>
         </div>
     """
-    st.markdown(app_toolbar_html, unsafe_allow_html=True)
+    # Render the HTML in the placeholder
+    clicked = toolbar_placeholder.html(app_toolbar_html)
 
 
 def add_logo(primary_color):
@@ -136,55 +145,27 @@ def create_slider(metric, pillar_name, step_size, default_value, slider_format):
     )
 
 
-@st.dialog("Your Personalized Report is Almost Ready!")
-def show_cta_modal():
-    st.markdown("""
-        While it's being generated, you can book a **FREE strategy call** to walk through 
-        your KPIs and get a clear plan to implement your growth fixes faster, easier, 
-        and with confidence.
-        """)
+def show_sequential_toasts():
+    # First toast - Explanation
+    st.toast(
+        "While your report is being generated, you can book a **FREE** strategy call to walk through your results and get a clear, **PERSONALIZED** plan.",
+        icon="✨"
+    )
 
-    cta_content = """
-        <style>
-          .cta-link { 
-            background-color: #c52b4d !important;
-            color: white !important;
-            border-radius: 999em;
-            padding: 0.5em 1.5em;
-            font-size: 1em;
-            font-weight: 600;
-            text-decoration: none !important;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5em;
-            transition: background 0.2s, color 0.2s;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-            cursor: pointer;
-          }
-          .cta-link:hover {
-            background-color: #a3203e !important;
-          }
-         .cta-text {
-            font-size: 0.9em;
-            display: inline;
-          }
-        </style>
-        <a href="https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2" 
-            class="cta-link" 
-            id="book_call"
-            target="_blank">
-                <span class="cta-text">✅ Book a Call - Free KPI Review</span>
-        </a>
-    """
-    clicked = click_detector(cta_content)
+    # Add a small delay between toasts
+    time.sleep(1.5)
 
-    st.markdown("*<p style='font-size:0.8em;'>30 minutes, no pressure - just clarity.</p>*",
-                unsafe_allow_html=True)
+    # Second toast - Direct to toolbar
+    st.toast(
+        "Click the **✅ Expert Analysis of Your Metrics - Book Your FREE Call** button in the top toolbar.",
+        icon="👆"
+    )
 
-    if clicked == "book_call":
-        st.session_state["review_requested"] = True
-        st.rerun()
+    # Add another small delay
+    time.sleep(1.5)
 
-    if st.button("Skip - I'll Try It Myself", type="secondary", key="skip_call"):
-        st.session_state["review_requested"] = False
-        st.rerun()
+    # Third toast - Reassurance
+    st.toast(
+        "30 minutes, no pressure - just clarity.",
+        icon="👍"
+    )

@@ -13,7 +13,7 @@ from db_queries.orientations import get_orientations
 from db_queries.saas_types import get_saas_types
 from utils.pdf_report_generators import *
 from utils.slider_helpers import get_slider_format, get_step_size
-from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer, show_cta_modal
+from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer, show_sequential_toasts
 
 
 # Load and use Streamlit config
@@ -130,7 +130,8 @@ def init_session_state():
             'pillar_data': None,
             'selected_saas_type': None,
             'selected_orientation': None,
-            'selected_industry': None
+            'selected_industry': None,
+            'diagnostics_run': False
         })
 
         # One-time database setup check
@@ -377,9 +378,8 @@ def render_ui_components():
                             display_metrics_for_pillar(current_pillar_id, current_stage, selected_saas_type,
                                                        selected_industry)
 
-            
             st.button("**🚀 Run Diagnostics**", type="primary", on_click=run_diagnostics)
-                
+
         # Horizontal line
         st.markdown("---")
 
@@ -394,10 +394,11 @@ def render_ui_components():
 # Run diagnostics on click
 def run_diagnostics():
     # show report page
+    show_sequential_toasts()
     logger.info("Run Diagnostics button clicked")
     st.success("Diagnostic analysis complete!")
+    st.session_state["diagnostics_run"] = True
     st.session_state["page"] = "report"
-    
 
 
 # === App Layout ===
