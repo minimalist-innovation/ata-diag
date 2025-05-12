@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 from db_queries.recommendations import get_recommendations_for_metric
 from db_queries.connection import get_db_connection
+from utils.ux_helpers import get_progress_column_config
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +61,7 @@ def render_streamlit_report(session_state):
 
                         metrics_data.append({
                             "Metric": metric_name,
-                            "Current": f"{current_value}{metric_data['unit']}",
+                            "Current": current_value,  # Store only numeric value
                             "Target": f"{metric_data['target_low_range']}-{metric_data['target_high_range']}{metric_data['unit']}"
                         })
 
@@ -70,12 +71,7 @@ def render_streamlit_report(session_state):
                         df,
                         column_config={
                             "Metric": st.column_config.TextColumn(width="large"),
-                            "Current": st.column_config.ProgressColumn(
-                                label="Current Value",
-                                format="%f",
-                                min_value=0,
-                                max_value=100 if "%" in metric_data['unit'] else None
-                            ),
+                            "Current": get_progress_column_config(metric_data['unit']),
                             "Target": "Target Range"
                         },
                         hide_index=True,

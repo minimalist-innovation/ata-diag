@@ -25,7 +25,6 @@ def get_recommendations():
         pass
 
 
-@cache_data(ttl=3600)
 def get_recommendations_for_metric(metric_id):
     recs = get_recommendations()
     return recs.get(metric_id, [])

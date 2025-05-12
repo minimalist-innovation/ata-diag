@@ -169,3 +169,30 @@ def show_sequential_toasts():
         "30 minutes, no pressure - just clarity.",
         icon="👍"
     )
+
+
+# Report Generation Helpers
+def get_progress_column_config(units):
+    """Return ProgressColumn config based on units"""
+    config = {
+        "label": "Current Value",
+        "min_value": 0
+    }
+
+    if "Percentage" in units:
+        config.update({
+            "format": "%.1f%%",
+            "max_value": 100
+        })
+    elif "Currency" in units:
+        config.update({
+            "format": "$%,.0f",
+            "max_value": None  # Allow dynamic scaling
+        })
+    else:
+        config.update({
+            "format": "%.1f",
+            "max_value": None
+        })
+
+    return st.column_config.ProgressColumn(**config)

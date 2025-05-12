@@ -3,11 +3,11 @@ def get_slider_format(units):
     if "Months" in units:
         return "%d"
     elif "Days" in units:
-        return "%d"
+        return "%d days"
     elif "Hours" in units:
-        return "%d"
+        return "%d hours"
     elif "Milliseconds" in units:
-        return "%d"
+        return "%d ms"
     elif "Percentage" in units:
         return "%.1f%%"
     else:
