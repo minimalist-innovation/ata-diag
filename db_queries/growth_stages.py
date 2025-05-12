@@ -1,11 +1,7 @@
 from db_queries.connection import get_db_connection
-from streamlit import cache_data
-import logging
 
 
-@cache_data(ttl=3600)  # Cache for 1 hour
 def determine_company_stage(revenue):
-    logging.info(revenue)
     conn = get_db_connection()
     try:
         with conn:
@@ -25,4 +21,3 @@ def determine_company_stage(revenue):
             return growth_stages_dict
     finally:
         pass
-

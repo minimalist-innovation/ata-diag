@@ -1,14 +1,12 @@
 from db_queries.connection import get_db_connection
-from streamlit import cache_data
 
 
-@cache_data(ttl=3600)  # Cache for 1 hour
 def get_industries(saas_type_id, orientation_id):
     conn = get_db_connection()
     try:
         with conn:
             cursor = conn.cursor()
-            rows = cursor.execute(
+            cursor.execute(
                 '''
                 SELECT i.id, i.industry_name
                 FROM industry_mappings im
@@ -27,4 +25,3 @@ def get_industries(saas_type_id, orientation_id):
             return industries_dict
     finally:
         pass
-

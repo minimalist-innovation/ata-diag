@@ -1,10 +1,7 @@
 from db_queries.connection import get_db_connection
-import logging
 import sqlite3
-from streamlit import cache_data
 
 
-@cache_data(ttl=3600)  # Cache for 1 hour
 def get_all_metrics():
     conn = get_db_connection()
     try:
@@ -34,7 +31,6 @@ def get_all_metrics():
         pass
 
 
-@cache_data(ttl=3600)  # Cache for 1 hour
 def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, industry_id=None):
     """Retrieve metrics with their value ranges based on growth stage, architecture pillar, and optional filters.
 
@@ -105,7 +101,6 @@ def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, indu
             return metrics_dict
 
     except sqlite3.Error as e:
-        logging.error(f"Database error in get_metrics: {str(e)}")
         return []
     finally:
         pass
