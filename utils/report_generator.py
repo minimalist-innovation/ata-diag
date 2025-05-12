@@ -4,7 +4,7 @@ import pandas as pd
 import streamlit as st
 from db_queries.recommendations import get_recommendations_for_metric
 from db_queries.connection import get_db_connection
-from utils.ux_helpers import get_progress_column_config
+from utils.ux_helpers import get_progress_column_config, format_value_with_unit
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ def render_streamlit_report(session_state):
 
     try:
         # ----- Report Header -----
-        st.title("🚀 SaaS Traction Diagnostic Report")
+        st.title("🧬 SaaS Traction Diagnostic Report")
         st.markdown(f"*Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}*")
         st.markdown("---")
 
@@ -59,10 +59,14 @@ def render_streamlit_report(session_state):
                         metric_data = session_state['metrics_cache'][metric_name]
                         current_value = session_state.get(metric_data["slider_key"], 0)
 
+                        # Format target range with appropriate units
+                        target_low = format_value_with_unit(metric_data['target_low_range'], metric_data['unit'])
+                        target_high = format_value_with_unit(metric_data['target_high_range'], metric_data['unit'])
+
                         metrics_data.append({
                             "Metric": metric_name,
-                            "Current": current_value,  # Store only numeric value
-                            "Target": f"{metric_data['target_low_range']}-{metric_data['target_high_range']}{metric_data['unit']}"
+                            "Current": current_value,  # Keep as numeric for ProgressColumn
+                            "Target": f"{target_low} - {target_high}"
                         })
 
                     # Display metrics table

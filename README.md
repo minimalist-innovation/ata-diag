@@ -2,7 +2,10 @@
 
 ## About ATA Diagnostic
 
-The Adaptive Traction Architecture (ATA) Diagnostic tool helps SaaS startups identify growth bottlenecks across four critical pillars: Product, Revenue, People, and Systems. Created by [Minimalist Innovation](https://minimalistinnovation.com), this self-assessment tool gives founders a quick health check of their business and highlights areas needing attention.
+The Adaptive Traction Architecture (ATA) Diagnostic tool helps SaaS startups identify growth bottlenecks across four
+critical pillars: Product, Revenue, People, and Systems. Created
+by [Minimalist Innovation](https://minimalistinnovation.com), this self-assessment tool gives founders a quick health
+check of their business and highlights areas needing attention.
 
 ### Who This Is For
 
@@ -77,7 +80,9 @@ We welcome contributions to improve the diagnostic tool. Please follow these ste
 
 ## About Minimalist Innovation
 
-Minimalist Innovation helps startups navigate growth plateaus and market shifts using Adaptive Traction Architecture. Led by Gandhinath Swaminathan (Gandhi), a PROSCI-certified change practitioner and founder, we deliver adaptive consulting for startups who want to build systems that last.
+Minimalist Innovation helps startups navigate growth plateaus and market shifts using Adaptive Traction Architecture.
+Led by Gandhinath Swaminathan (Gandhi), a PROSCI-certified change practitioner and founder, we deliver adaptive
+consulting for startups who want to build systems that last.
 
 ## Learn More
 
@@ -87,9 +92,3 @@ Minimalist Innovation helps startups navigate growth plateaus and market shifts 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-
-- Email: gandhinath@minimalistinnovation.com
-- Phone: 1-425-426-7878
-- Address: 555 Andover Park W, Tukwila, WA 98188

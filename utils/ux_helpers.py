@@ -173,26 +173,61 @@ def show_sequential_toasts():
 
 # Report Generation Helpers
 def get_progress_column_config(units):
-    """Return ProgressColumn config based on units"""
-    config = {
-        "label": "Current Value",
-        "min_value": 0
-    }
-
+    """Return a simple NumberColumn config based on units"""
     if "Percentage" in units:
-        config.update({
-            "format": "%.1f%%",
-            "max_value": 100
-        })
+        return st.column_config.NumberColumn(
+            "Current Value",
+            format="%.1f%%"
+        )
     elif "Currency" in units:
-        config.update({
-            "format": "$%,.0f",
-            "max_value": None  # Allow dynamic scaling
-        })
+        return st.column_config.NumberColumn(
+            "Current Value",
+            format="$%,.0f"
+        )
+    elif "Months" in units:
+        return st.column_config.NumberColumn(
+            "Current Value",
+            format="%d months"
+        )
+    elif "Days" in units:
+        return st.column_config.NumberColumn(
+            "Current Value",
+            format="%d days"
+        )
+    elif "Hours" in units:
+        return st.column_config.NumberColumn(
+            "Current Value",
+            format="%d hours"
+        )
+    elif "Milliseconds" in units:
+        return st.column_config.NumberColumn(
+            "Current Value",
+            format="%d ms"
+        )
     else:
-        config.update({
-            "format": "%.1f",
-            "max_value": None
-        })
+        return st.column_config.NumberColumn(
+            "Current Value",
+            format="%.1f"
+        )
 
-    return st.column_config.ProgressColumn(**config)
+
+def format_value_with_unit(value, unit):
+    """Format a value based on its unit type, similar to get_slider_format"""
+    try:
+        value = float(value)
+        if "Percentage" in unit:
+            return f"{value:.1f}%"
+        elif "Currency" in unit:
+            return f"${value:,.0f}"
+        elif "Months" in unit:
+            return f"{int(value)} months"
+        elif "Days" in unit:
+            return f"{int(value)} days"
+        elif "Hours" in unit:
+            return f"{int(value)} hours"
+        elif "Milliseconds" in unit:
+            return f"{int(value)} ms"
+        else:
+            return f"{value:.1f}"
+    except (ValueError, TypeError):
+        return str(value)
