@@ -30,7 +30,7 @@ def add_footer():
 
     footer_html = f"""
     <div class="footer">
-        <div class="footer-main">© {current_year} Minimalist Innovation LLC. All rights reserved.</div>
+        <div class="footer-main">© {current_year} <a href="https://minimalistinnovation.com">Minimalist Innovation LLC</a>. All rights reserved.</div>
         <div class="footer-disclaimer">
             <span class="disclaimer-short">Use of this tool is at your own risk.</span>
             <span class="disclaimer-full">
@@ -153,7 +153,7 @@ def show_sequential_toasts():
     )
 
     # Add a small delay between toasts
-    time.sleep(1.5)
+    time.sleep(.5)
 
     # Second toast - Direct to toolbar
     st.toast(
@@ -162,7 +162,7 @@ def show_sequential_toasts():
     )
 
     # Add another small delay
-    time.sleep(1.5)
+    time.sleep(1)
 
     # Third toast - Reassurance
     st.toast(

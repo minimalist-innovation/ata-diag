@@ -11,7 +11,7 @@ from db_queries.industries import get_industries
 from db_queries.metrics import get_metrics
 from db_queries.orientations import get_orientations
 from db_queries.saas_types import get_saas_types
-from utils.pdf_report_generators import *
+from utils.report_generator import *
 from utils.slider_helpers import get_slider_format, get_step_size
 from utils.ux_helpers import add_toolbar, add_logo, load_css, load_js, add_footer, show_sequential_toasts
 
@@ -216,7 +216,7 @@ def display_metrics_for_pillar(architecture_pillar_id, growth_stage_id, saas_typ
                     "slider_format": slider_format,
                     "blog_link": metric['blog_link'],
                     "video_link": metric['video_link'],
-                    "key_takeaways": metric['key_takeaways'],
+                    "metric_id": metric_id
                 }
                 # Store the target range separately in session_state
                 st.session_state['metrics_cache'][metric['metric_name']] = metric_info

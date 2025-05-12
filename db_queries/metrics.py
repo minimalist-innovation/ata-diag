@@ -61,13 +61,12 @@ def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, indu
                        agsma.max_value,
                        agsma.lo_range_value,
                        agsma.hi_range_value,
-                       agsma.key_takeaways,
                        m.metric_type_id,
                        mt.type_name
                 FROM architecture_growth_stage_metric_associations agsma
                          JOIN metrics m ON agsma.metric_id = m.id
                          JOIN metric_types mt ON m.metric_type_id = mt.id
-                WHERE agsma.metric_enabled = 1
+                WHERE agsma.enabled = 1
                   AND agsma.growth_stage_id = ?
                   AND agsma.architecture_pillar_id = ?
                 """
@@ -100,7 +99,6 @@ def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, indu
                     'max_value': row['max_value'],
                     'lo_range_value': row['lo_range_value'],
                     'hi_range_value': row['hi_range_value'],
-                    'key_takeaways': row['key_takeaways'],
                 }
                 for row in cursor.fetchall()
             }
