@@ -1,6 +1,8 @@
 from db_queries.connection import get_db_connection
+import streamlit as st
 
 
+@st.cache_data(ttl=3600)
 def get_orientations():
     conn = get_db_connection()
     try:

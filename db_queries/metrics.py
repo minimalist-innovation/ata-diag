@@ -1,7 +1,10 @@
 from db_queries.connection import get_db_connection
 import sqlite3
 
+import streamlit as st
 
+
+@st.cache_data(ttl=3600)
 def get_all_metrics():
     conn = get_db_connection()
     try:
@@ -31,6 +34,7 @@ def get_all_metrics():
         pass
 
 
+@st.cache_data(ttl=3600)
 def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, industry_id=None):
     """Retrieve metrics with their value ranges based on growth stage, architecture pillar, and optional filters.
 

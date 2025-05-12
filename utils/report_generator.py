@@ -128,7 +128,7 @@ def render_streamlit_report(session_state):
                                 st.markdown("---")
 
         finally:
-            conn.close()
+            pass
 
         # ----- Next Steps -----
         st.header("🚦 Next Steps")

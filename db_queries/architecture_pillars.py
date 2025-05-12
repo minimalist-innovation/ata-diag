@@ -1,6 +1,8 @@
 from db_queries.connection import get_db_connection
+import streamlit as st
 
 
+@st.cache_data(ttl=3600)
 def get_architecture_pillars():
     """Return architecture pillars as a dictionary with IDs as keys"""
     conn = get_db_connection()
