@@ -16,7 +16,7 @@ pandas = "*"
 sqlalchemy = "*"
 seaborn = "*"
 toml = "*"
-st-click-detector = "*"
+watchdog = "*"
 
 [dev-packages]
 

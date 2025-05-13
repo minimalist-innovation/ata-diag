@@ -6,9 +6,10 @@ base = "light"
 maxUploadSize = 1024
 enableCORS = false
 enableXsrfProtection = true
+enableStaticServing = true
 
 [logger]
-level = "info"
+level = "debug"
 messageFormat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 enableFileLogging = true
 logFilePath = "logs/app.log"

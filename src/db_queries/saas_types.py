@@ -1,8 +1,8 @@
-from db_queries.connection import get_db_connection
-from streamlit import cache_data
+from src.db_queries.connection import get_db_connection
+import streamlit as st
 
 
-@cache_data(ttl=3600)  # Cache for 1 hour
+@st.cache_data(ttl=3600)
 def get_saas_types():
     conn = get_db_connection()
     try:
