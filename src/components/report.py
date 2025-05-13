@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from decimal import Decimal
 
 import pandas as pd
 import streamlit as st
@@ -11,45 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 # Report Generation Helpers
-def get_progress_column_config(units):
-    """Return a simple NumberColumn config based on units"""
-    if "Percentage" in units:
-        return st.column_config.NumberColumn(
-            "Current Value",
-            format="%.1f%%"
-        )
-    elif "Currency" in units:
-        return st.column_config.NumberColumn(
-            "Current Value",
-            format="$%,.0f"
-        )
-    elif "Months" in units:
-        return st.column_config.NumberColumn(
-            "Current Value",
-            format="%d months"
-        )
-    elif "Days" in units:
-        return st.column_config.NumberColumn(
-            "Current Value",
-            format="%d days"
-        )
-    elif "Hours" in units:
-        return st.column_config.NumberColumn(
-            "Current Value",
-            format="%d hours"
-        )
-    elif "Milliseconds" in units:
-        return st.column_config.NumberColumn(
-            "Current Value",
-            format="%d ms"
-        )
-    else:
-        return st.column_config.NumberColumn(
-            "Current Value",
-            format="%.1f"
-        )
-
-
 def format_value_with_unit(value, unit):
     """Format a value based on its unit type, similar to get_slider_format"""
     try:
@@ -57,7 +17,7 @@ def format_value_with_unit(value, unit):
         if "Percentage" in unit:
             return f"{value:.1f}%"
         elif "Currency" in unit:
-            return f"${value:,.0f}"
+            return f"${value:.0f}"
         elif "Months" in unit:
             return f"{int(value)} months"
         elif "Days" in unit:
@@ -112,14 +72,16 @@ def generate_report(session_state):
 
                     try:
                         # Attempt to get and convert the value to float
-                        current_value = float(session_state.get(persistent_key, 0))
+                        current_value = format_value_with_unit(
+                            session_state.get(persistent_key, 0),
+                            metric_data['unit'])
                     except (ValueError, TypeError):
                         # If conversion fails, use a default value
                         current_value = 0.0
 
                     metrics_data.append({
                         "Metric": metric_name,
-                        "Current": Decimal(float(current_value)),
+                        "Current": current_value,
                         "Target": f"{metric_data['target_low_range']} - {metric_data['target_high_range']} {metric_data['unit']}"
                     })
 
@@ -127,7 +89,7 @@ def generate_report(session_state):
                     pd.DataFrame(metrics_data),
                     column_config={
                         "Metric": st.column_config.TextColumn(width="large"),
-                        "Current": get_progress_column_config(metric_data['unit']),
+                        "Current": st.column_config.TextColumn(width="medium"),
                         "Target": "Target Range"
                     },
                     hide_index=True,

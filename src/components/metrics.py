@@ -19,6 +19,8 @@ def get_step_size_for_slider(units):
         return 1.0
     elif "Milliseconds" in units:
         return 100.00
+    elif "Currency" in units:
+        return 1000.00
     elif "Percentage" in units:
         return 0.3
     else:
@@ -35,6 +37,8 @@ def get_slider_format(units):
         return "%d hours"
     elif "Milliseconds" in units:
         return "%d ms"
+    elif "Currency" in units:
+        return "$%.2f"
     elif "Percentage" in units:
         return "%.1f%%"
     else:
