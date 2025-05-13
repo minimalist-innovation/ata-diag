@@ -32,7 +32,6 @@ def init_database():
 
 
 def initialize_session_state():
-    """Initialize required session state variables"""
     """Initialize required session state variables with defaults"""
     defaults = {
         'selected_saas_type': 'standard_saas',
