@@ -1,5 +1,9 @@
+import logging
+
 from src.db_queries.connection import get_db_connection
 import streamlit as st
+
+logger = logging.getLogger(__name__)
 
 
 @st.cache_data(ttl=3600)
@@ -26,5 +30,7 @@ def get_recommendations():
 
 
 def get_recommendations_for_metric(metric_id):
+    logger.debug(f"Get recommendations for metric {metric_id}")
     recs = get_recommendations()
+    logger.debug(f"Debug - Metric {metric_id} has {len(recs.get(metric_id, []))} recs")
     return recs.get(metric_id, [])

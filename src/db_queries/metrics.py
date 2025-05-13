@@ -1,7 +1,11 @@
+import logging
+
 from src.db_queries.connection import get_db_connection
 import sqlite3
 
 import streamlit as st
+
+logger = logging.getLogger(__name__)
 
 
 @st.cache_data(ttl=3600)
@@ -47,11 +51,16 @@ def get_metrics(growth_stage_id, architecture_pillar_id, saas_type_id=None, indu
         Returns:
             List[dict]: Metric associations with details and value ranges
         """
+    logger.debug(f"Query params: growth_stage_id={growth_stage_id}, "
+                 f"architecture_pillar_id={architecture_pillar_id}, "
+                 f"saas_type_id={saas_type_id}, "
+                 f"industry_id={industry_id}")
+
     conn = get_db_connection()
     try:
         # Base query with required parameters
         query = """
-                SELECT agsma.id,
+                SELECT m.id,
                        m.metric_name,
                        m.description,
                        m.blog_link,

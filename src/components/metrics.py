@@ -1,7 +1,12 @@
+import logging
+from decimal import Decimal
+
 import streamlit as st
 
 from src.db_queries.architecture_pillars import get_architecture_pillars
 from src.db_queries.metrics import get_metrics
+
+logger = logging.getLogger(__name__)
 
 
 def get_step_size_for_slider(units):
@@ -13,7 +18,7 @@ def get_step_size_for_slider(units):
     elif "Hours" in units:
         return 1.0
     elif "Milliseconds" in units:
-        return 100
+        return 100.00
     elif "Percentage" in units:
         return 0.3
     else:
@@ -41,10 +46,10 @@ def create_slider(metric, pillar_name, step_size, default_value, slider_format):
 
     return st.slider(
         label=f"{metric['metric_name']} ({metric['units']})",
-        min_value=float(metric['min_value']),
-        max_value=float(metric['max_value']),
-        value=st.session_state.get(slider_key, default_value),
-        step=step_size,
+        min_value=Decimal(float(metric['min_value'])),
+        max_value=Decimal(float(metric['max_value'])),
+        value=Decimal(float(st.session_state.get(slider_key, default_value))),
+        step=Decimal(float(step_size)),
         format=slider_format,
         key=slider_key
     )

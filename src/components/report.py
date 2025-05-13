@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from decimal import Decimal
 
 import pandas as pd
 import streamlit as st
@@ -108,11 +109,17 @@ def generate_report(session_state):
                 for metric_name in metric_names:
                     metric_data = session_state['metrics_cache'][metric_name]
                     persistent_key = f"metric_{metric_data['pillar_id']}_{metric_data['metric_id']}"
-                    current_value = session_state.get(persistent_key, 0)
+
+                    try:
+                        # Attempt to get and convert the value to float
+                        current_value = float(session_state.get(persistent_key, 0))
+                    except (ValueError, TypeError):
+                        # If conversion fails, use a default value
+                        current_value = 0.0
 
                     metrics_data.append({
                         "Metric": metric_name,
-                        "Current": current_value,
+                        "Current": Decimal(float(current_value)),
                         "Target": f"{metric_data['target_low_range']} - {metric_data['target_high_range']} {metric_data['unit']}"
                     })
 

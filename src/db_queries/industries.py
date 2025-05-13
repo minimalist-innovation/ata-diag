@@ -33,15 +33,15 @@ def get_all_industries():
         pass
 
 
-def get_industries(saas_type_id, orientation_id):
-    """In-memory filtering"""
+def get_industries(saas_type_id=None, orientation_id=None):
+    """In-memory filtering with optional parameters"""
     mappings = get_industry_mappings()
     industries = get_all_industries()
 
     matching_ids = [
         m['industry_id'] for m in mappings
-        if m['saas_type_id'] == saas_type_id
-           and m['orientation_id'] == orientation_id
+        if (saas_type_id is None or m['saas_type_id'] == saas_type_id)
+           and (orientation_id is None or m['orientation_id'] == orientation_id)
     ]
 
     return {

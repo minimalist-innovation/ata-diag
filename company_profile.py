@@ -5,7 +5,7 @@ from streamlit_extras.add_vertical_space import add_vertical_space
 
 from constants import REQUIRED_SESSION_KEYS
 from src.db_queries.growth_stages import determine_company_stage
-from src.db_queries.industries import get_industries
+from src.db_queries.industries import get_industries, get_all_industries
 from src.db_queries.orientations import get_orientations
 from src.db_queries.saas_types import get_saas_types
 
@@ -32,14 +32,16 @@ def main():
         # --- Column 1: SaaS Type and Orientation ---
         with col1:
             saas_types = get_saas_types()
+            saas_types_with_all = {None: {'type_name': 'All SaaS Types'}}
+            saas_types_with_all.update(saas_types)
             selected_saas_type = st.selectbox(
                 "Select your SaaS company type:",
                 index=0,
-                options=list(saas_types.keys()),
-                format_func=lambda x: saas_types[x]['type_name'],
+                options=list(saas_types_with_all.keys()),
+                format_func=lambda x: saas_types_with_all[x]['type_name'] if x is not None else 'All SaaS Types',
                 key="selected_saas_type_key"
             )
-            st.session_state['selected_saas_type'] = saas_types[selected_saas_type]['type_name']
+            st.session_state['selected_saas_type'] = saas_types_with_all[selected_saas_type]['type_name']
 
             orientations = get_orientations()
             selected_orientation = st.selectbox(
@@ -53,7 +55,10 @@ def main():
 
         # --- Column 2: Industry, Age, Revenue ---
         with col2:
-            industries = get_industries(selected_saas_type, selected_orientation)
+            if selected_saas_type is None or selected_orientation is None:
+                industries = get_all_industries()
+            else:
+                industries = get_industries(selected_saas_type, selected_orientation)
             if not industries:
                 st.error("No valid industries found for this combination. Please check your previous selections.")
                 st.session_state['selected_industry'] = None
@@ -61,14 +66,16 @@ def main():
                 st.session_state['growth_stage_id'] = None
                 return
 
+            industries_with_all = {None: {'industry_name': 'All Industries'}}
+            industries_with_all.update(industries)
             selected_industry = st.selectbox(
                 "Select your primary industry/sector:",
                 index=0,
-                options=list(industries.keys()),
-                format_func=lambda x: industries[x]['industry_name'],
+                options=list(industries_with_all.keys()),
+                format_func=lambda x: industries_with_all[x]['industry_name'] if x is not None else 'All Industries',
                 key="selected_industry_key"
             )
-            st.session_state['selected_industry'] = industries[selected_industry]['industry_name']
+            st.session_state['selected_industry'] = industries_with_all[selected_industry]['industry_name']
 
             months_existed = st.number_input(
                 "How long has your company been in existence? (months)",

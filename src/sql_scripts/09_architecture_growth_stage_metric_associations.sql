@@ -1,27 +1,98 @@
 CREATE TABLE IF NOT EXISTS architecture_growth_stage_metric_associations
 (
-    id                     INTEGER PRIMARY KEY,
-    growth_stage_id        INTEGER        NOT NULL,
-    architecture_pillar_id INTEGER        NOT NULL,
-    saas_type_id           INTEGER        NULL,
-    industry_id            INTEGER        NULL,
-    metric_id              INTEGER        NOT NULL,
-    min_value              DECIMAL(12, 4) NOT NULL,
-    max_value              DECIMAL(12, 4) NOT NULL,
-    lo_range_value         DECIMAL(12, 4) NOT NULL,
-    hi_range_value         DECIMAL(12, 4) NOT NULL,
-    enabled                INTEGER        NOT NULL CHECK (enabled IN (0, 1)),
-    FOREIGN KEY (growth_stage_id) REFERENCES growth_stages (id),
-    FOREIGN KEY (architecture_pillar_id) REFERENCES architecture_pillars (id),
-    FOREIGN KEY (saas_type_id) REFERENCES saas_types (id),
-    FOREIGN KEY (industry_id) REFERENCES industries (id),
-    FOREIGN KEY (metric_id) REFERENCES metrics (id)
-);
+    id
+    INTEGER
+    PRIMARY
+    KEY,
+    growth_stage_id
+    INTEGER
+    NOT
+    NULL,
+    architecture_pillar_id
+    INTEGER
+    NOT
+    NULL,
+    saas_type_id
+    INTEGER
+    NULL,
+    industry_id
+    INTEGER
+    NULL,
+    metric_id
+    INTEGER
+    NOT
+    NULL,
+    min_value
+    DECIMAL
+(
+    12,
+    4
+) NOT NULL,
+    max_value DECIMAL
+(
+    12,
+    4
+) NOT NULL,
+    lo_range_value DECIMAL
+(
+    12,
+    4
+) NOT NULL,
+    hi_range_value DECIMAL
+(
+    12,
+    4
+) NOT NULL,
+    enabled INTEGER NOT NULL CHECK
+(
+    enabled
+    IN
+(
+    0,
+    1
+)),
+    FOREIGN KEY
+(
+    growth_stage_id
+) REFERENCES growth_stages
+(
+    id
+),
+    FOREIGN KEY
+(
+    architecture_pillar_id
+) REFERENCES architecture_pillars
+(
+    id
+),
+    FOREIGN KEY
+(
+    saas_type_id
+) REFERENCES saas_types
+(
+    id
+),
+    FOREIGN KEY
+(
+    industry_id
+) REFERENCES industries
+(
+    id
+),
+    FOREIGN KEY
+(
+    metric_id
+) REFERENCES metrics
+(
+    id
+)
+    );
 
 CREATE INDEX IF NOT EXISTS idx_architecture_growth_stage_metric_associations
     ON architecture_growth_stage_metric_associations (architecture_pillar_id, growth_stage_id, metric_id);
 
-PRAGMA foreign_keys = ON;
+PRAGMA
+foreign_keys = ON;
 
 DELETE
 FROM architecture_growth_stage_metric_associations;
@@ -104,5 +175,19 @@ VALUES (1, 2, 2, NULL, NULL, 5, 0, 100, 15, 30, 1),
        (65, 5, 3, 1, NULL, 33, 0, 100, 15, 25, 1),
        (66, 5, 3, NULL, NULL, 43, 0, 100, 90, 100, 1),
        (67, 5, 3, NULL, NULL, 44, 0, 100, 75, 100, 1),
-       (68, 5, 3, NULL, NULL, 45, 0, 100, 90, 95, 1)
-;
+       (68, 5, 3, NULL, NULL, 45, 0, 100, 90, 95, 1),
+       (69, 3, 2, NULL, NULL, 4, 1, 30, 5, 8, 1),
+       (70, 3, 2, NULL, NULL, 8, 0, 100, 4, 7, 1),
+       (71, 3, 1, NULL, NULL, 15, 0, 600, 250, 350, 1),
+       (72, 3, 3, NULL, NULL, 40, 0, 100, 45, 60, 1),
+       (73, 3, 3, NULL, NULL, 35, 0, 100, 10, 13, 1),
+       (74, 3, 3, NULL, NULL, 37, 0, 100, 75, 80, 1),
+       (75, 4, 3, NULL, NULL, 38, 1, 80, 4, 8, 1),
+       (76, 4, 3, NULL, NULL, 41, 50, 100, 99, 99.9999, 1),
+       (77, 4, 3, NULL, NULL, 42, 1, 3000, 300, 800, 1),
+       (78, 4, 3, NULL, NULL, 36, 0, 100, 60, 70, 1),
+       (79, 5, 1, NULL, NULL, 21, 0, 100, 20, 25, 1),
+       (80, 5, 1, NULL, NULL, 22, 0, 100, 20, 25, 1),
+       (81, 5, 1, NULL, NULL, 27, 0, 100, 25, 35, 1),
+       (82, 5, 1, NULL, NULL, 28, 0, 100, 20, 30, 1),
+       (83, 5, 1, NULL, NULL, 29, 0, 100, 45, 60, 1);
