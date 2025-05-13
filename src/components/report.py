@@ -17,7 +17,7 @@ def format_value_with_unit(value, unit):
         if "Percentage" in unit:
             return f"{value:.1f}%"
         elif "Currency" in unit:
-            return f"${value:.0f}"
+            return f"${value:.2f}"
         elif "Months" in unit:
             return f"{int(value)} months"
         elif "Days" in unit:

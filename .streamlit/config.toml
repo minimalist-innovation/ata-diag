@@ -9,7 +9,7 @@ enableXsrfProtection = true
 enableStaticServing = true
 
 [logger]
-level = "debug"
+level = "info"
 messageFormat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 enableFileLogging = true
 logFilePath = "logs/app.log"
