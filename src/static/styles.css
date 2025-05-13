@@ -211,6 +211,15 @@ section[data-testid="stMain"] > div[data-testid="stMainBlockContainer"] {
     height: 3px;
 }
 
+/*Disable sidebar navigation*/
+[data-testid="stSidebarNav"] {
+    display: none !important;
+}
+
+[data-testid="collapsedControl"] {
+    display: none !important;
+}
+
 /* Container styling for metrics */
 [data-testid="stContainer"] {
     background-color: var(--color-neutral-100);

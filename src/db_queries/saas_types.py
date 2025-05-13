@@ -1,21 +1,21 @@
-from db_queries.connection import get_db_connection
+from src.db_queries.connection import get_db_connection
 import streamlit as st
 
 
 @st.cache_data(ttl=3600)
-def get_orientations():
+def get_saas_types():
     conn = get_db_connection()
     try:
         with conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT id, orientation_name FROM orientations")
+            cursor.execute("SELECT id, type_name FROM saas_types")
             # Create dictionary with ID as key and remaining columns as value
-            orientations_dict = {
+            saas_types_dict = {
                 row['id']: {
-                    'orientation_name': row['orientation_name'],
+                    'type_name': row['type_name'],
                 }
                 for row in cursor.fetchall()
             }
-            return orientations_dict
+            return saas_types_dict
     finally:
         pass

@@ -1,4 +1,4 @@
-from db_queries.connection import get_db_connection
+from src.db_queries.connection import get_db_connection
 import sqlite3
 
 import streamlit as st

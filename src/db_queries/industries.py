@@ -1,5 +1,5 @@
 # industries.py
-from db_queries.connection import get_db_connection
+from src.db_queries.connection import get_db_connection
 import streamlit as st
 
 

@@ -16,6 +16,7 @@ pandas = "*"
 sqlalchemy = "*"
 seaborn = "*"
 toml = "*"
+watchdog = "*"
 
 [dev-packages]
 

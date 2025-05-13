@@ -6,6 +6,7 @@ base = "light"
 maxUploadSize = 1024
 enableCORS = false
 enableXsrfProtection = true
+enableStaticServing = true
 
 [logger]
 level = "debug"
