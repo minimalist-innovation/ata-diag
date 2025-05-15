@@ -85,6 +85,12 @@ if __name__ == "__main__":
             icon="⚙️",
             url_path="system_metrics",
         ),
+        st.Page(
+            "people_metrics.py",
+            title="People Metrics",
+            icon="🧑‍🤝‍🧑",
+            url_path="people_metrics",
+        ),
         st.Page(  # Add Report Page
             "report_page.py",
             title="Generate Report",

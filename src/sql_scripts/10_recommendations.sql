@@ -338,4 +338,17 @@ VALUES
 (47, 'Implement delegation strategies for routine operational tasks'),
 (47, 'Hire operational leaders to own day-to-day execution'),
 (47, 'Develop clear escalation criteria for when founder involvement is needed'),
-(47, 'Track operational time allocation to identify transition opportunities');
+(47, 'Track operational time allocation to identify transition opportunities'),
+
+-- Percentage of Team Aligned on Top Three Priorities
+(48,
+ 'Communicate your top three priorities clearly and frequently across multiple channels (emails, meetings, team chats) to reinforce understanding and retention.'),
+(48,
+ 'Connect individual and team tasks to the top three priorities by explaining the "why" behind each assignment, helping everyone see how their work contributes to company goals.'),
+(48,
+ 'Use the "Keep, Cut, Combine" framework to strictly limit your focus to three priorities, eliminating or merging others to avoid dilution of alignment.'),
+(48,
+ 'Hold regular (e.g., weekly) check-ins specifically focused on progress toward the top three priorities, as frequent reviews are proven to increase alignment.'),
+(48,
+ 'Regularly measure and track the percentage of team members who can accurately articulate the top three priorities, using surveys or interviews, to identify alignment gaps and trends.')
+;

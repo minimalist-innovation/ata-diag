@@ -16,4 +16,4 @@ INSERT INTO architecture_pillars
 VALUES (1, 'Revenue', 'Evaluates acquisition channels and revenue resilience', '💰', 1, TRUE),
        (2, 'Product', 'Assesses product development and market responsiveness', '🎁', 2, TRUE),
        (3, 'Systems', 'Examines operational processes and scalability', '⚙️', 3, TRUE),
-       (4, 'People', 'Explores decision-making frameworks and organizational structure', '🧑‍🤝‍🧑', 4, FALSE);
+       (4, 'People', 'Explores decision-making frameworks and organizational structure', '🧑‍🤝‍🧑', 4, TRUE);

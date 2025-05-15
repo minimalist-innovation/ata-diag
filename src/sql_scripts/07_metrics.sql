@@ -1,13 +1,39 @@
 CREATE TABLE IF NOT EXISTS metrics
 (
-    id             INTEGER PRIMARY KEY,
-    metric_name    TEXT    NOT NULL,
-    metric_type_id INTEGER NOT NULL,
-    description    TEXT    NOT NULL,
-    blog_link      TEXT    NULL,
-    video_link     TEXT    NULL,
-    units          TEXT    NOT NULL,
-    FOREIGN KEY (metric_type_id) REFERENCES metric_types (id)
+    id
+        INTEGER
+        PRIMARY
+            KEY,
+    metric_name
+        TEXT
+        NOT
+            NULL,
+    metric_type_id
+        INTEGER
+        NOT
+            NULL,
+    description
+        TEXT
+        NOT
+            NULL,
+    blog_link
+        TEXT
+        NULL,
+    video_link
+        TEXT
+        NULL,
+    units
+        TEXT
+        NOT
+            NULL,
+    FOREIGN
+        KEY
+        (
+         metric_type_id
+            ) REFERENCES metric_types
+        (
+         id
+            )
 );
 
 DELETE
@@ -353,4 +379,11 @@ VALUES (1,
         'Percentage Operational Founder Time measures the percentage of total team time dedicated to maintaining existing systems, including support, technical debt, feature deployment, and incident response activities.',
         'https://www.minimalistinnovation.com/post/saas-founder-time-operations-vs-strategy-burnout',
         'https://youtu.be/1RC06JgWVYU',
+        'Percentage'),
+       (48,
+        3,
+        'Percentage of Team Aligned on Top Three Priorities',
+        'Percentage of Team Aligned on Top Three Priorities measures the share of employees in your startup who can clearly identify and articulate the organization''s three most important strategic goals.',
+        'https://www.minimalistinnovation.com/post/team-alignment-top-3-priorities',
+        'https://youtu.be/KSiPqSDF3wo',
         'Percentage');

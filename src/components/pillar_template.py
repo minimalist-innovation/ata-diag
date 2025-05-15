@@ -46,7 +46,8 @@ def pillar_page_template(pillar_id: int):
             1: "revenue_metrics.py",
             2: "product_metrics.py",
             3: "system_metrics.py",
-            4: "report_page.py"
+            4: "people_metrics.py",
+            5: "report_page.py"
         }.get(pillar_id + 1)
 
         st.caption(f"Next: {next_page.replace('_', ' ').title()[:-3]}")
