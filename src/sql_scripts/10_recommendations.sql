@@ -350,5 +350,24 @@ VALUES
 (48,
  'Hold regular (e.g., weekly) check-ins specifically focused on progress toward the top three priorities, as frequent reviews are proven to increase alignment.'),
 (48,
- 'Regularly measure and track the percentage of team members who can accurately articulate the top three priorities, using surveys or interviews, to identify alignment gaps and trends.')
+ 'Regularly measure and track the percentage of team members who can accurately articulate the top three priorities, using surveys or interviews, to identify alignment gaps and trends.'),
+-- Decision Cycle Time (DCT)
+(49,
+ 'Adopt proven decision frameworks like MEDDPICC or RAPID to clarify roles and accelerate decision-making, enabling faster sales qualification and reducing cycle times.'),
+(49,
+ 'Automate manual bottlenecks such as lead scoring and routine approvals to streamline processes and boost efficiency.'),
+(49,
+ 'Create clear, simple partner agreements (SLAs) for B2B2C relationships to prevent external delays and keep cycles predictable.'),
+(49,
+ 'Set up escalation paths for stalled decisions so urgent issues reach executives within 24 hours, maintaining momentum and healthy pipelines.'),
+(49,
+ 'Benchmark and regularly track your Decision Cycle Time against industry standards to identify improvement areas and stay competitive.'),
+(49,
+ 'Use the Cost of Delay framework to prioritize decisions and projects by quantifying the financial impact of waiting, ensuring focus on high-value actions.'),
+(49,
+ 'Balance speed with quality by aiming for appropriate decision velocity-avoid both analysis paralysis and rushed, low-quality choices.'),
+(49,
+ 'Standardize documentation and meeting practices, such as Amazon-style memos and focused reading periods, to ensure clarity and accelerate alignment.'),
+(49,
+ 'Continuously review and refine your decision-making process, learning from delays and iterating to maintain fast, effective execution.')
 ;

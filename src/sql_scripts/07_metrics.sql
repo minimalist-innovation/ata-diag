@@ -1,46 +1,19 @@
 CREATE TABLE IF NOT EXISTS metrics
 (
-    id
-        INTEGER
-        PRIMARY
-            KEY,
-    metric_name
-        TEXT
-        NOT
-            NULL,
-    metric_type_id
-        INTEGER
-        NOT
-            NULL,
-    description
-        TEXT
-        NOT
-            NULL,
-    blog_link
-        TEXT
-        NULL,
-    video_link
-        TEXT
-        NULL,
-    units
-        TEXT
-        NOT
-            NULL,
-    FOREIGN
-        KEY
-        (
-         metric_type_id
-            ) REFERENCES metric_types
-        (
-         id
-            )
+    id             INTEGER PRIMARY KEY,
+    metric_name    TEXT    NOT NULL,
+    metric_type_id INTEGER NOT NULL,
+    description    TEXT    NOT NULL,
+    blog_link      TEXT    NULL,
+    video_link     TEXT    NULL,
+    units          TEXT    NOT NULL,
+    FOREIGN KEY (metric_type_id) REFERENCES metric_types (id)
 );
 
 DELETE
 FROM metrics;
 
-INSERT
-    OR IGNORE
+INSERT OR IGNORE
 INTO metrics (id,
               metric_type_id,
               metric_name,
@@ -386,4 +359,11 @@ VALUES (1,
         'Percentage of Team Aligned on Top Three Priorities measures the share of employees in your startup who can clearly identify and articulate the organization''s three most important strategic goals.',
         'https://www.minimalistinnovation.com/post/team-alignment-top-3-priorities',
         'https://youtu.be/KSiPqSDF3wo',
-        'Percentage');
+        'Percentage'),
+       (49,
+        3,
+        'Decision Cycle Time (DCT)',
+        'Decision Cycle Time (DCT) tracks the complete duration from identifying a decision need to full implementation, mirroring the sales "Time-to-Close" metric.',
+        'https://www.minimalistinnovation.com/post/decision-cycle-time',
+        'https://youtu.be/trTTxTx5cT4',
+        'Days');
