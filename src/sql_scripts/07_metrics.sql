@@ -366,4 +366,11 @@ VALUES (1,
         'Decision Cycle Time (DCT) tracks the complete duration from identifying a decision need to full implementation, mirroring the sales "Time-to-Close" metric.',
         'https://www.minimalistinnovation.com/post/decision-cycle-time',
         'https://youtu.be/trTTxTx5cT4',
-        'Days');
+        'Days'),
+       (50,
+        3,
+        'Lead Conversion Rate from MQL to SQL',
+        'The MQL to SQL Conversion Rate tracks the percentage of marketing-engaged leads that sales deems ready for direct engagement and likely to buy.',
+        'https://www.minimalistinnovation.com/post/lead-conversion-rate-mql-to-sql',
+        'https://youtu.be/NnpQQthwF9s',
+        'Percentage');
