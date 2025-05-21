@@ -372,14 +372,22 @@ VALUES
  'Continuously review and refine your decision-making process, learning from delays and iterating to maintain fast, effective execution.'),
 -- Lead Conversion Rate from MQL to SQL
 (50,
- 'Align sales and marketing teams on MQL/SQL definitions using shared CRM dashboards to prevent lead confusion'),
-(50, 'Implement behavioral lead scoring tracking content downloads and product usage patterns'),
-(50, 'Respond to MQLs within one hour to leverage significant conversion increase potential'),
-(50, 'Personalize nurturing campaigns by industry, role, and pain points to boost conversions'),
-(50, 'Use product usage data to identify sales-ready leads in PLG models'),
-(50, 'Prioritize high-quality MQLs over quantity to focus sales efforts effectively'),
-(50, 'Factor sales cycle length into conversion rate timing for accurate measurement'),
-(50, 'Track lead funnel data across CRM and marketing automation tools consistently'),
-(50, 'Analyze conversion rates by lead source to optimize channel investments'),
-(50, 'Establish clear SLA agreements between sales and marketing for lead handoffs')
+ 'Align sales and marketing teams on MQL/SQL definitions using shared CRM dashboards to prevent lead confusion.'),
+(50, 'Implement behavioral lead scoring tracking content downloads and product usage patterns.'),
+(50, 'Respond to MQLs within one hour to leverage significant conversion increase potential.'),
+(50, 'Personalize nurturing campaigns by industry, role, and pain points to boost conversions.'),
+(50, 'Use product usage data to identify sales-ready leads in PLG models.'),
+(50, 'Prioritize high-quality MQLs over quantity to focus sales efforts effectively.'),
+(50, 'Factor sales cycle length into conversion rate timing for accurate measurement.'),
+(50, 'Track lead funnel data across CRM and marketing automation tools consistently.'),
+(50, 'Analyze conversion rates by lead source to optimize channel investments.'),
+(50, 'Establish clear SLA agreements between sales and marketing for lead handoffs.'),
+-- Team Engagement Score
+(51, 'Conduct monthly engagement pulse checks alongside quarterly eNPS surveys for real-time insights.'),
+(51, 'Include open-ended "why" follow-up questions to uncover root causes of engagement gaps.'),
+(51, 'Segment scores by department, tenure, and role to identify specific improvement areas.'),
+(51, 'Map employee workflows to customer journeys using Service Design principles for alignment.'),
+(51, 'Implement recognition programs with budget allocation for spot bonuses and peer shoutouts.'),
+(51, 'Create personalized growth plans targeting "Passive" employees to prevent voluntary exits.'),
+(51, 'Establish rapid 72-hour response cycles for acting on survey feedback to demonstrate urgency.')
 ;
