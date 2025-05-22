@@ -389,5 +389,20 @@ VALUES
 (51, 'Map employee workflows to customer journeys using Service Design principles for alignment.'),
 (51, 'Implement recognition programs with budget allocation for spot bonuses and peer shoutouts.'),
 (51, 'Create personalized growth plans targeting "Passive" employees to prevent voluntary exits.'),
-(51, 'Establish rapid 72-hour response cycles for acting on survey feedback to demonstrate urgency.')
+(51, 'Establish rapid 72-hour response cycles for acting on survey feedback to demonstrate urgency.'),
+-- % of Roles with OKRs
+(52,
+ 'Conduct a quarterly audit of all roles using RACI charts to accurately map organizational functions and ensure OKR coverage is measured by roles, not headcount.'),
+(52,
+ 'Aim for at least 70% of roles with defined OKRs, as startups reaching this threshold see significantly higher ARR growth and alignment.'),
+(52,
+ 'Limit each role to one objective and two measurable key results to maintain focus and prevent overload, especially for technical and customer-facing teams.'),
+(52,
+ 'Implement regular OKR training workshops for managers and teams to build a consistent understanding and application of the OKR framework.'),
+(52,
+ 'Automate OKR tracking with dedicated software to improve transparency, accelerate adoption, and enable real-time progress monitoring.'),
+(52,
+ 'Adopt a hybrid cascading approach: set 70% of OKRs top-down and allow teams to define the remaining 30% to boost buy-in and relevance.'),
+(52,
+ 'Use clear, specific, and outcome-oriented language in OKRs, ensuring each is ambitious yet achievable and directly tied to measurable value.')
 ;
