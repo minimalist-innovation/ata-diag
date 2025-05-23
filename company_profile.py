@@ -145,9 +145,18 @@ def main():
 
             all_filled = all(st.session_state.get(field) for field in required_fields)
 
-            nav_col1, spacer, nav_col3 = st.columns([2, 1, 2])
-            with nav_col3:
+            # Use weighted grid specification for proper alignment
+            col1, spacer, col3 = st.columns([2, 1, 2])
+
+            # Spacer column, leave empty
+            with col1:
+                pass
+            with spacer:
+                pass
+
+            with col3:
                 if all_filled:
+                    st.caption(f"Next: {"revenue_metrics.py".replace('_', ' ').title()[:-3]}")
                     if st.button("Continue ▶",
                                  type="primary",
                                  key="company_profile_continue"):

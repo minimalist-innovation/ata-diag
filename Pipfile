@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 numpy = "*"
 scipy = "*"
-streamlit = "1.44"
+streamlit = "1.45"
 streamlit-extras = "*"
 textblob = "*"
 neattext = "*"

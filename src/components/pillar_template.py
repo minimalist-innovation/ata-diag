@@ -59,8 +59,8 @@ def pillar_page_template(pillar_id: int):
             5: "report_page.py"
         }.get(pillar_id - 1)
 
-        nav_col1, spacer, nav_col3 = st.columns([2, 1, 2])
-        with nav_col1:
+        col1, spacer, col3 = st.columns([2, 1, 2])
+        with col1:
             if len(st.session_state.page_history) > 0:
                 st.caption(f"Previous: {previous_page.replace('_', ' ').title()[:-3]}")
                 if st.button("◀︎ Back",
@@ -71,7 +71,12 @@ def pillar_page_template(pillar_id: int):
                     session_previous_page = st.session_state.page_history[-1]
                     st.session_state.current_page = session_previous_page
                     st.switch_page(session_previous_page)
-        with nav_col3:
+
+        # Spacer column, leave empty
+        with spacer:
+            pass
+
+        with col3:
             st.caption(f"Next: {next_page.replace('_', ' ').title()[:-3]}")
             if st.button("Continue ▶︎",
                          type="primary",
