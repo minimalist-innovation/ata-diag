@@ -8,6 +8,7 @@ PILLAR_ID = 2
 
 def main():
     """Main entry point for product pillar page"""
+    st.session_state.current_page = "product_metrics.py"
 
     # Navigation guard
     if 'pillar_1_complete' not in st.session_state:

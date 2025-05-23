@@ -9,8 +9,8 @@ def add_toolbar():
     toolbar_placeholder = st.empty()
 
     button_text = "🤙  Book Your FREE Startup Metrics Review Call"
-    if st.session_state.get("diagnostics_run", True):
-        button_text = "✅ Expert Analysis of Your Metrics - Book Your FREE Call"
+    if st.session_state.get("current_page", None) == "report_page.py":
+        button_text = "Expert Analysis of Your Metrics - Book Your FREE Call 🤙"
 
     app_toolbar_html = f"""
         <div class="sticky-header">

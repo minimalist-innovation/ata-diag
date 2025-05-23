@@ -21,6 +21,8 @@ def main():
             else:
                 st.session_state[key] = None
 
+    st.session_state.current_page = "company_profile.py"
+    st.session_state.page_history.append("company_profile.py")
     st.title("🏢 Company Profile")
     st.markdown("Please enter your company details to begin your diagnostics.")
 
@@ -143,12 +145,18 @@ def main():
 
             all_filled = all(st.session_state.get(field) for field in required_fields)
 
-            if all_filled:
-                if st.button("✅ Mark Complete & Continue", type="primary"):
-                    st.session_state['company_profile_complete'] = True
-                    st.switch_page("revenue_metrics.py")
-            else:
-                st.info("Please complete all fields above to continue.")
+            nav_col1, spacer, nav_col3 = st.columns([2, 1, 2])
+            with nav_col3:
+                if all_filled:
+                    if st.button("Continue ▶",
+                                 type="primary",
+                                 key="company_profile_continue"):
+                        st.session_state['company_profile_complete'] = True
+                        st.session_state.page_history.append("revenue_metrics.py")
+                        st.session_state.current_page = "revenue_metrics.py"
+                        st.switch_page("revenue_metrics.py")
+                else:
+                    st.info("Please complete all fields above to continue.")
 
 
 if __name__ == "__main__":

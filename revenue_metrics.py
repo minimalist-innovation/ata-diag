@@ -7,7 +7,8 @@ PILLAR_ID = 1
 
 
 def main():
-    """Main entry point for product pillar page"""
+    """Main entry point for revenue pillar page"""
+    st.session_state.current_page = "revenue_metrics.py"
 
     # Navigation guard
     if not all(st.session_state.get(k) for k in ['selected_saas_type', 'selected_orientation']):

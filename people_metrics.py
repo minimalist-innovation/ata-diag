@@ -8,6 +8,7 @@ PILLAR_ID = 4
 
 def main():
     """Main entry point for people pillar page"""
+    st.session_state.current_page = "people_metrics.py"
 
     # Navigation guard
     if 'pillar_3_complete' not in st.session_state:

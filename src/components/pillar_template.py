@@ -43,18 +43,44 @@ def pillar_page_template(pillar_id: int):
         )
 
         next_page = {
+            0: "company_profile.py",
             1: "revenue_metrics.py",
             2: "product_metrics.py",
             3: "system_metrics.py",
             4: "people_metrics.py",
             5: "report_page.py"
         }.get(pillar_id + 1)
+        previous_page = {
+            0: "company_profile.py",
+            1: "revenue_metrics.py",
+            2: "product_metrics.py",
+            3: "system_metrics.py",
+            4: "people_metrics.py",
+            5: "report_page.py"
+        }.get(pillar_id - 1)
 
-        st.caption(f"Next: {next_page.replace('_', ' ').title()[:-3]}")
-        if st.button("✅ Mark Complete & Continue", type="primary"):
-            st.session_state[f"pillar_{pillar_id}_complete"] = True
-            st.session_state.current_page = next_page
-            st.switch_page(next_page)
+        nav_col1, spacer, nav_col3 = st.columns([2, 1, 2])
+        with nav_col1:
+            if len(st.session_state.page_history) > 0:
+                st.caption(f"Previous: {previous_page.replace('_', ' ').title()[:-3]}")
+                if st.button("◀︎ Back",
+                             type="primary",
+                             key=f"pillar_{pillar_id}_back"):
+                    # Pop current page from history and switch to previous
+                    st.session_state.page_history.pop()  # Remove current
+                    session_previous_page = st.session_state.page_history[-1]
+                    st.session_state.current_page = session_previous_page
+                    st.switch_page(session_previous_page)
+        with nav_col3:
+            st.caption(f"Next: {next_page.replace('_', ' ').title()[:-3]}")
+            if st.button("Continue ▶︎",
+                         type="primary",
+                         key=f"pillar_{pillar_id}_continue"):
+                # Update history before switching
+                st.session_state.page_history.append(next_page)
+                st.session_state.current_page = next_page
+                st.session_state[f"pillar_{pillar_id}_complete"] = True
+                st.switch_page(next_page)
 
     except Exception as e:
         logger.error(f"Pillar page error: {str(e)}")

@@ -1,5 +1,4 @@
 # pages/report_page.py
-import time
 
 import streamlit as st
 
@@ -12,8 +11,7 @@ def main():
     """Main entry point for report generation page"""
     if not all(key in st.session_state for key in REQUIRED_SESSION_KEYS):
         st.error("Complete company profile first")
-        st.switch_page("company_profile")
-        return
+        st.switch_page("company_profile.py")
 
     try:
         # Validate session state before rendering
@@ -36,6 +34,7 @@ def main():
         # Generate the report
         show_sequential_cta_toasts()  # Display CTA toasts
         with st.spinner("🔍 Generating your personalized report..."):
+            st.session_state.page_history.append(st.session_state.current_page)
             generate_report(st.session_state)
 
     except Exception as e:

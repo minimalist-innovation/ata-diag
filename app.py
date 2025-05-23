@@ -38,7 +38,9 @@ def initialize_session_state():
         'selected_orientation': 'horizontal',
         'selected_industry': 'general_software',
         'annual_revenue': 1.0,
-        'growth_stage_id': 0
+        'growth_stage_id': 0,
+        'page_history': [],
+        'current_page': None,
     }
 
     for key in REQUIRED_SESSION_KEYS:
