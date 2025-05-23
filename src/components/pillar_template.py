@@ -1,6 +1,7 @@
 import logging
 
 import streamlit as st
+from streamlit_extras.stylable_container import stylable_container
 
 from src.components.metrics import display_metrics_for_pillar
 from src.db_queries.architecture_pillars import get_architecture_pillars
@@ -61,31 +62,91 @@ def pillar_page_template(pillar_id: int):
 
         col1, spacer, col3 = st.columns([2, 1, 2])
         with col1:
-            if len(st.session_state.page_history) > 0:
-                st.caption(f"Previous: {previous_page.replace('_', ' ').title()[:-3]}")
-                if st.button("◀︎ Back",
-                             type="primary",
-                             key=f"pillar_{pillar_id}_back"):
-                    # Pop current page from history and switch to previous
-                    st.session_state.page_history.pop()  # Remove current
-                    session_previous_page = st.session_state.page_history[-1]
-                    st.session_state.current_page = session_previous_page
-                    st.switch_page(session_previous_page)
+            with stylable_container(
+                    key="back_group_container",
+                    css_styles="""
+                               button {
+                                    float: left;
+                                    margin-left: auto;
+                                }
+                                .left-stack {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: flex-start; /* left-align both caption and button */
+                                }
+                                .left-stack .caption {
+                                    color: gray;
+                                    font-style: italic;
+                                    font-size: 0.875rem;
+                                    margin-bottom: 0.75rem; /* adjust spacing as needed */
+                                }
+                                """
+            ):
+                if len(st.session_state.page_history) > 0:
+                    st.markdown(
+                        """
+                        <div class="left-stack">
+                            <div class="caption">
+                                Previous: {0}
+                            </div>
+                        </div>
+                        """.format(previous_page.replace('_', ' ').title()[:-3]), unsafe_allow_html=True)
+                    st.markdown('<div class="left-stack">', unsafe_allow_html=True)
+                    if st.button("◀︎ Back",
+                                 type="primary",
+                                 key=f"pillar_{pillar_id}_back"):
+                        # Pop current page from history and switch to previous
+                        st.session_state.page_history.pop()  # Remove current
+                        session_previous_page = st.session_state.page_history[-1]
+                        st.session_state.current_page = session_previous_page
+                        st.switch_page(session_previous_page)
+                    st.markdown("</div>", unsafe_allow_html=True)
 
         # Spacer column, leave empty
         with spacer:
             pass
 
         with col3:
-            st.caption(f"Next: {next_page.replace('_', ' ').title()[:-3]}")
-            if st.button("Continue ▶︎",
-                         type="primary",
-                         key=f"pillar_{pillar_id}_continue"):
-                # Update history before switching
-                st.session_state.page_history.append(next_page)
-                st.session_state.current_page = next_page
-                st.session_state[f"pillar_{pillar_id}_complete"] = True
-                st.switch_page(next_page)
+            with stylable_container(
+                    key="continue_group_container",
+                    css_styles="""
+                   button {
+                        float: right;
+                        margin-left: auto;
+                    }
+                    .right-stack {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-end; /* right-align both caption and button */
+                    }
+                    .right-stack .caption {
+                        color: gray;
+                        font-style: italic;
+                        font-size: 0.875rem;
+                        margin-bottom: 0.75rem; /* adjust spacing as needed */
+                    }
+                    """
+            ):
+                st.markdown(
+                    """
+                    <div class="right-stack">
+                        <div class="caption">
+                            Next: {0}
+                        </div>
+                    </div>
+                    """.format(next_page.replace('_', ' ').title()[:-3]), unsafe_allow_html=True)
+
+                st.markdown('<div class="right-stack">', unsafe_allow_html=True)
+                if st.button("Continue ▶︎",
+                             type="primary",
+                             key=f"pillar_{pillar_id}_continue"):
+                    # Update history before switching
+                    st.session_state.page_history.append(next_page)
+                    st.session_state.current_page = next_page
+                    st.session_state[f"pillar_{pillar_id}_complete"] = True
+                    st.switch_page(next_page)
+                st.markdown("</div>", unsafe_allow_html=True)
+
 
     except Exception as e:
         logger.error(f"Pillar page error: {str(e)}")

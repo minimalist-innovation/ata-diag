@@ -192,57 +192,6 @@ button[kind="primary"][data-testid="baseButton-primary"] {
 }
 
 /* === NAVIGATION BUTTONS === */
-/* Back button column (left) - Column 1 */
-div[data-testid="column"]:nth-of-type(1) {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    text-align: left !important;
-}
-
-/* Continue button column (right) - Column 3 */
-div[data-testid="column"]:nth-of-type(3) {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-end !important;
-    text-align: right !important;
-}
-
-/* Caption alignment */
-div[data-testid="column"]:nth-of-type(1) div[data-testid="stCaptionContainer"] > p {
-    text-align: left !important;
-    margin: 0 0 0.5rem 0 !important;
-}
-
-div[data-testid="column"]:nth-of-type(3) div[data-testid="stCaptionContainer"] > p {
-    text-align: right !important;
-    margin: 0 0 0.5rem 0 !important;
-}
-
-/* Button container alignment */
-div[data-testid="column"]:nth-of-type(1) div[data-testid="stButton"] {
-    display: flex !important;
-    justify-content: flex-start !important;
-    width: 100% !important;
-}
-
-div[data-testid="column"]:nth-of-type(3) div[data-testid="stButton"] {
-    display: flex !important;
-    justify-content: flex-end !important;
-    width: 100% !important;
-}
-
-/* Individual button positioning */
-div[data-testid="column"]:nth-of-type(1) button {
-    margin-right: auto !important;
-    margin-left: 0 !important;
-}
-
-div[data-testid="column"]:nth-of-type(3) button {
-    margin-left: auto !important;
-    margin-right: 0 !important;
-}
-
 /* Emoji color standardization */
 button[kind="primary"] .emoji {
     filter: sepia(1) saturate(5) hue-rotate(140deg) brightness(0.8);

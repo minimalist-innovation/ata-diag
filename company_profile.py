@@ -2,6 +2,7 @@ import logging
 
 import streamlit as st
 from streamlit_extras.add_vertical_space import add_vertical_space
+from streamlit_extras.stylable_container import stylable_container
 
 from constants import REQUIRED_SESSION_KEYS
 from src.db_queries.growth_stages import determine_company_stage
@@ -156,14 +157,44 @@ def main():
 
             with col3:
                 if all_filled:
-                    st.caption(f"Next: {"revenue_metrics.py".replace('_', ' ').title()[:-3]}")
-                    if st.button("Continue ▶",
-                                 type="primary",
-                                 key="company_profile_continue"):
-                        st.session_state['company_profile_complete'] = True
-                        st.session_state.page_history.append("revenue_metrics.py")
-                        st.session_state.current_page = "revenue_metrics.py"
-                        st.switch_page("revenue_metrics.py")
+                    with stylable_container(
+                            key="continue_group_container",
+                            css_styles="""
+                             button {
+                                float: right;
+                                margin-left: auto;
+                            }
+                            .right-stack {
+                                display: flex;
+                                flex-direction: column;
+                                align-items: flex-end; /* right-align both caption and button */
+                            }
+                            .right-stack .caption {
+                                color: gray;
+                                font-style: italic;
+                                font-size: 0.875rem;
+                                margin-bottom: 0.75rem; /* adjust spacing as needed */
+                            }
+                            """
+                    ):
+                        st.markdown(
+                            """
+                            <div class="right-stack">
+                                <div class="caption">
+                                    Next: {0}
+                                </div>
+                            </div>
+                            """.format('revenue_metrics.py'.replace('_', ' ').title()[:-3]), unsafe_allow_html=True)
+
+                        st.markdown('<div class="right-stack">', unsafe_allow_html=True)
+                        if st.button("Continue ▶",
+                                     type="primary",
+                                     key="company_profile_continue"):
+                            st.session_state['company_profile_complete'] = True
+                            st.session_state.page_history.append("revenue_metrics.py")
+                            st.session_state.current_page = "revenue_metrics.py"
+                            st.switch_page("revenue_metrics.py")
+                        st.markdown("</div>", unsafe_allow_html=True)
                 else:
                     st.info("Please complete all fields above to continue.")
 
