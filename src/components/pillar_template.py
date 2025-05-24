@@ -80,6 +80,30 @@ def pillar_page_template(pillar_id: int):
                                     font-size: 0.875rem;
                                     margin-bottom: 0.75rem; /* adjust spacing as needed */
                                 }
+                                /* Tablet fixes */
+                                @media (max-width: 768px) {
+                                    button {
+                                        float: none !important;
+                                        width: 100% !important;
+                                        margin: 0 !important;
+                                        padding: 0.75rem !important;
+                                    }
+                                    .left-stack {
+                                        width: 100%;
+                                    }
+                                }
+                                /* Small mobile optimization */
+                                @media (max-width: 480px) {
+                                    button {
+                                        padding: 1rem !important;
+                                        font-size: 1.1rem !important;
+                                        font-weight: 600 !important;
+                                    }
+                                    .left-stack .caption {
+                                        font-size: 1rem !important;
+                                        text-align: center !important;
+                                    }
+                                }
                                 """
             ):
                 if len(st.session_state.page_history) > 0:
@@ -124,6 +148,35 @@ def pillar_page_template(pillar_id: int):
                         font-style: italic;
                         font-size: 0.875rem;
                         margin-bottom: 0.75rem; /* adjust spacing as needed */
+                    }
+                    /* Tablet fixes - stacks buttons vertically */
+                    @media (max-width: 768px) {
+                        button {
+                            float: none !important;
+                            width: 100% !important;
+                            margin: 0.75rem 0 0 0 !important;
+                            padding: 0.75rem !important;
+                            display: block !important;
+                        }
+                        .right-stack {
+                            width: 100%;
+                            align-items: stretch !important;
+                        }
+                        .right-stack .caption {
+                            text-align: right !important; 
+                        }
+                    }
+                     /* Small mobile optimization */
+                    @media (max-width: 480px) {
+                        button {
+                            padding: 1rem !important;
+                            font-size: 1.1rem !important;
+                            font-weight: 600 !important;
+                        }
+                        .right-stack .caption {
+                            font-size: 1rem !important;
+                            text-align: right !important;
+                        }
                     }
                     """
             ):
