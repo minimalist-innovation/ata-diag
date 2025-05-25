@@ -114,7 +114,7 @@ def display_metrics_for_pillar(architecture_pillar_id, growth_stage_id, saas_typ
                 # Add null check before float conversion
                 target_low = float(metric.get('lo_range_value', 0.0))
                 target_high = float(metric.get('hi_range_value', target_low + 100.0))  # Default 100-unit range
-                target_range = f"**_{target_low - target_high} {metric['units']}_**"
+                target_range = f"**_{target_low}-{target_high} {metric['units']}_**"
                 default_value = (target_low + target_high) / 2
 
                 persistent_key = f"metric_{architecture_pillar_id}_{metric_id}"
