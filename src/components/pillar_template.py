@@ -90,6 +90,11 @@ def pillar_page_template(pillar_id: int):
                                     }
                                     .left-stack {
                                         width: 100%;
+                                        align-items: stretch !important;
+                                    }
+                                    .left-stack .caption {
+                                        font-size: 1rem !important;
+                                        text-align: center !important;
                                     }
                                 }
                                 /* Small mobile optimization */
@@ -163,7 +168,7 @@ def pillar_page_template(pillar_id: int):
                             align-items: stretch !important;
                         }
                         .right-stack .caption {
-                            text-align: right !important; 
+                            text-align: center !important; 
                         }
                     }
                      /* Small mobile optimization */
@@ -175,7 +180,7 @@ def pillar_page_template(pillar_id: int):
                         }
                         .right-stack .caption {
                             font-size: 1rem !important;
-                            text-align: right !important;
+                            text-align: center !important;
                         }
                     }
                     """

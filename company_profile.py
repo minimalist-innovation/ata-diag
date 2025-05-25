@@ -189,7 +189,7 @@ def main():
                                     align-items: stretch !important;
                                 }
                                 .right-stack .caption {
-                                    text-align: right !important; 
+                                    text-align: center !important; 
                                 }
                             }
                              /* Small mobile optimization */
@@ -201,7 +201,7 @@ def main():
                                 }
                                 .right-stack .caption {
                                     font-size: 1rem !important;
-                                    text-align: right !important;
+                                    text-align: center !important;
                                 }
                             }
                             """

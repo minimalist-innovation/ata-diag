@@ -8,9 +8,9 @@ def add_toolbar():
     # Create a placeholder for the toolbar
     toolbar_placeholder = st.empty()
 
-    button_text = "Stop SaaS Leaks: Invite Me for a FREE Metrics Autopsy 🔍"
+    button_text = "Find Hidden Profit Leaks 🔍 [Claim Your Free Review]"
     if st.session_state.get("current_page", None) == "report_page.py":
-        button_text = "Fix Your Metrics Blind Spots ➔ Invite Me for a FREE Audit 🕵️‍♂️"
+        button_text = "Solve Hidden Profit Leaks → [Claim Your Fix Plan] 🔧"
 
     app_toolbar_html = f"""
         <div class="sticky-header">
