@@ -725,11 +725,11 @@
         },
         "narwhals": {
             "hashes": [
-                "sha256:17064abffd264ea1cfe6aefc8a0080f3a4ffb3659a98bcad5456ca80b88f2a0a",
-                "sha256:1e6c731811d01c61147c52433b4d4edfb6511aaf2c859aa01c2e8ca6ff4d27e5"
+                "sha256:0ab2e5a1757a19b071e37ca74b53b0b5426789321d68939738337dfddea629b5",
+                "sha256:d958336b40952e4c4b7aeef259a7074851da0800cf902186a58f2faeff97be02"
             ],
             "markers": "python_version >= '3.8'",
-            "version": "==1.40.0"
+            "version": "==1.41.0"
         },
         "neattext": {
             "hashes": [

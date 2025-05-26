@@ -404,5 +404,28 @@ VALUES
 (52,
  'Adopt a hybrid cascading approach: set 70% of OKRs top-down and allow teams to define the remaining 30% to boost buy-in and relevance.'),
 (52,
- 'Use clear, specific, and outcome-oriented language in OKRs, ensuring each is ambitious yet achievable and directly tied to measurable value.')
+ 'Use clear, specific, and outcome-oriented language in OKRs, ensuring each is ambitious yet achievable and directly tied to measurable value.'),
+-- Competitive Win Rate
+(53, 'Respond fast: Deals that get a response within four hours close 35% more often. Don''t let leads go cold.'),
+(53,
+ 'Engage whole team early: Bring multiple stakeholders into the first discovery calls to increase win rates by up to 45%.'),
+(53, 'Give sales the right tools: Use competitor battle cards to win 32% more deals against named rivals.'),
+(53,
+ 'Prioritize the end-user (for B2B2C): Track user experience with metrics like NPS to drive a 28% higher win rate.'),
+(53,
+ 'Track competitors closely: Manual tracking in CRM can lift win rates by 53%, and build a dedicated competitive intelligence function as you scale.'),
+-- Span of Control
+(54,
+ 'Match management style to team needs: Use hands-on "player/coach" managers for small teams (3-5 direct reports) and coordinators for larger, standardized teams (up to 9-15).'),
+(54,
+ 'Standardize workflows and leverage technology: Well-defined processes and the right tools allow managers to handle wider spans, especially in sales and customer success.'),
+(54,
+ 'Regularly review and adjust your span of control as you scale: Don''t let ratios stagnate—optimize as your company grows to avoid bottlenecks and burnout.'),
+(54, 'Cut unnecessary management layers: Streamline your org chart to speed up decisions and save 10-15% in costs.'),
+(54,
+ 'Tailor ratios for each function: Sales, engineering, and customer success teams have different optimal spans; one size does not fit all.'),
+(54,
+ 'Invest in team skills and autonomy: High-skill teams need fewer managers—training and upskilling reduce the need for close oversight.'),
+(54,
+ 'Audit for compliance: For public-sector contracts, always check regional labor laws before finalizing manager ratios.');
 ;
