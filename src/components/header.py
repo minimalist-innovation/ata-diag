@@ -90,7 +90,7 @@ def add_logo(primary_color):
 
 def header():
     # All the logo
-    add_logo(primary_color="#23274d")
+    add_logo(primary_color="#003580")
 
     # Add the toolbar
     add_toolbar()

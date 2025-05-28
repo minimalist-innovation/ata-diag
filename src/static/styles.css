@@ -5,8 +5,8 @@
     /* Color system */
     --color-primary: #c52b4d;
     --color-primary-dark: #a3203e;
-    --color-secondary: #23274d;
-    --color-secondary-dark: #1a1e3d;
+    --color-secondary: #003580;
+    --color-secondary-dark: #2b2b2b;
     --color-neutral-100: #ffffff;
     --color-neutral-200: #f0f2f6;
     --color-neutral-300: #e5e7eb;
@@ -210,13 +210,6 @@ button[kind="primary"][data-testid="baseButton-primary"] {
 /* Emoji color standardization */
 button[kind="primary"] .emoji {
     filter: sepia(1) saturate(5) hue-rotate(140deg) brightness(0.8);
-}
-
-/* Back/Continue arrow styling */
-.nav-arrow {
-    font-size: 1.2em;
-    vertical-align: -0.15em;
-    margin: 0 0.3em;
 }
 
 /* Unified caption styling */
@@ -471,7 +464,7 @@ button[kind="primary"] .emoji {
     position: sticky;
     top: 0;
     margin: 0 auto;
-    background: #23274d !important;
+    background: var(--color-secondary) !important;
     color: white !important;
     z-index: 9999;
     display: flex;
@@ -488,7 +481,7 @@ button[kind="primary"] .emoji {
     font-size: 1.1em;
     font-weight: 600;
     letter-spacing: 0.02em;
-    background: #23274d !important;
+    background: var(--color-secondary) !important;
     color: white !important;
 }
 
