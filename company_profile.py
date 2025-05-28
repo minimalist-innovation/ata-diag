@@ -217,7 +217,7 @@ def main():
 
                         st.markdown('<div class="right-stack">', unsafe_allow_html=True)
                         if st.button("Continue ▶",
-                                     type="primary",
+                                     type="secondary",
                                      key="company_profile_continue"):
                             st.session_state['company_profile_complete'] = True
                             st.session_state.page_history.append("revenue_metrics.py")

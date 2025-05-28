@@ -122,7 +122,7 @@ def pillar_page_template(pillar_id: int):
                         """.format(previous_page.replace('_', ' ').title()[:-3]), unsafe_allow_html=True)
                     st.markdown('<div class="left-stack">', unsafe_allow_html=True)
                     if st.button("◀︎ Back",
-                                 type="primary",
+                                 type="secondary",
                                  key=f"pillar_{pillar_id}_back"):
                         # Pop current page from history and switch to previous
                         st.session_state.page_history.pop()  # Remove current
@@ -196,7 +196,7 @@ def pillar_page_template(pillar_id: int):
 
                 st.markdown('<div class="right-stack">', unsafe_allow_html=True)
                 if st.button("Continue ▶︎",
-                             type="primary",
+                             type="secondary",
                              key=f"pillar_{pillar_id}_continue"):
                     # Update history before switching
                     st.session_state.page_history.append(next_page)
