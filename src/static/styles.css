@@ -165,11 +165,6 @@ section[data-testid="stMain"] > div[data-testid="stMainBlockContainer"] {
     text-decoration: none !important;
 }
 
-/* Add to existing button styles */
-.stButton > button[kind="primary"] .emoji {
-    filter: invert(16%) sepia(99%) saturate(4691%) hue-rotate(335deg) brightness(92%) contrast(98%);
-}
-
 /* Custom styling for secondary buttons */
 .stButton > button[kind="secondary"] {
     background-color: var(--color-secondary) !important;
@@ -193,11 +188,6 @@ section[data-testid="stMain"] > div[data-testid="stMainBlockContainer"] {
     text-decoration: none !important;
 }
 
-/* Add to existing button styles */
-.stButton > button[kind="secondary"] .emoji {
-    filter: invert(16%) sepia(99%) saturate(4691%) hue-rotate(335deg) brightness(92%) contrast(98%);
-}
-
 /* Unified button styling */
 button[kind="primary"][data-testid="baseButton-primary"] {
     min-width: 220px !important;
@@ -207,11 +197,6 @@ button[kind="primary"][data-testid="baseButton-primary"] {
 }
 
 /* === NAVIGATION BUTTONS === */
-/* Emoji color standardization */
-button[kind="primary"] .emoji {
-    filter: sepia(1) saturate(5) hue-rotate(140deg) brightness(0.8);
-}
-
 /* Unified caption styling */
 .stCaption {
     font-size: 0.85rem !important;
