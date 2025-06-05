@@ -68,6 +68,19 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
+### Testing
+We use Pytest and Streamlit Testing framework for this application. Please run the following commands in order to run the test cases.
+All of the test cases are written under `tests/` folder.
+
+```bash
+# assuming you are in the root directory of the project
+# run the pipenv virtual environment along with dependencies.
+pipenv shell
+
+# run pytests
+PYTHONPATH=. pytest
+```
+
 ## Contributing
 
 We welcome contributions to improve the diagnostic tool. Please follow these steps:

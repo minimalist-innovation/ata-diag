@@ -17,6 +17,8 @@ sqlalchemy = "*"
 seaborn = "*"
 toml = "*"
 watchdog = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [dev-packages]
 
