@@ -1,7 +1,7 @@
 # constants/__init__.py
 REQUIRED_SESSION_KEYS = [
     'page_history',
-    'current_page'
+    'current_page',
     'selected_saas_type',
     'selected_orientation',
     'selected_industry',
