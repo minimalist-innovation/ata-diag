@@ -4,9 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+click = "8.1.8"
 numpy = "*"
 scipy = "*"
-streamlit = "1.45"
+streamlit = "1.44.1"
 streamlit-extras = "*"
 textblob = "*"
 neattext = "*"
