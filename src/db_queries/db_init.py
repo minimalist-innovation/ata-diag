@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def execute_sql_file(conn, path):
     """Execute SQL file in proper order with transaction handling"""
     try:
-        with open(path, 'r') as f:
+        with open(path, 'r', encoding="utf-8") as f:
             sql = f.read()
         conn.executescript(sql)
         logger.info(f"Executed SQL file: {os.path.basename(path)}")
