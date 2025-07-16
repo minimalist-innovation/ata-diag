@@ -169,6 +169,22 @@ mock_complete_session_state = {
     
 }
 
+mock_default_session_state = {
+    #Initialization Data
+    'page_history': [],
+    'current_page': 'report_page.py',
+    'selected_saas_type': None,
+    'selected_orientation': None,
+    'selected_industry': None,
+    'annual_revenue': -1,
+    'growth_stage_id': -1,
+    'growth_stage_name': None,
+    'pillar_1_complete': True,
+    'pillar_2_complete': True,
+    'pillar_3_complete': True,
+    'metrics_cache': {}
+}
+
 
 
 mock_error_messages = [
@@ -198,4 +214,47 @@ mock_unit_types = [
     "Days",
     "Hours",
     "Milliseconds"
+]
+
+# Mock return values for dropdown options
+mock_saas_types = {
+    0: {'type_name': 'All SaaS Types'},
+    1: {'type_name': 'B2C'},
+    2: {'type_name': 'B2B2C'}
+}
+
+mock_orientations = {
+    1: {'orientation_name': 'Horizontal'},
+    2: {'orientation_name': 'Vertical'}
+}
+
+mock_industries = {
+    0: {'industry_name' : 'All Industries'},
+    1: {'industry_name': 'Healthcare'},
+    2: {'industry_name': 'Financial Services'},
+    3: {'industry_name': 'Retail/E-commerce'},
+    4: {'industry_name': 'Manufacturing'},
+    5: {'industry_name': 'Construction'},
+    6: {'industry_name': 'Logistics/Supply Chain'},
+    7: {'industry_name': 'Insurance'},
+    8: {'industry_name': 'Hospitality'},
+    9: {'industry_name': 'Education'},
+    10: {'industry_name': 'Real Estate'},
+    99: {'industry_name': 'Other'}
+}
+
+mock_growth_stages_max_revenue = [
+    {'growth_stage_max' : 1, 'growth_stage_name': "Pre-Qualification"},     #[0,1]
+    {'growth_stage_max' : 2, 'growth_stage_name': "Validation Seekers"},    #(1,2]
+    {'growth_stage_max' : 4, 'growth_stage_name': "Traction Builders"},     #(2,4]
+    {'growth_stage_max' : 7, 'growth_stage_name': "Scale Preparers"},       #(4,7]
+    {'growth_stage_max' : 10, 'growth_stage_name': "Growth Accelerators"},  #(7,10]
+    {'growth_stage_max' : 1000, 'growth_stage_name': "Expansion Navigators"}   #(10,1000)
+]
+
+mock_pillar_names = [
+    "Revenue",
+    "Product",
+    "System",
+    "People"
 ]
