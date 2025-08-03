@@ -2,14 +2,14 @@ import streamlit as st
 
 # Page Configuration
 st.set_page_config(
-    page_title="Adaptive Traction Architecture Diagnostics",
+    page_title="STEP Diagnostics Tool",
     page_icon="🧬",
     layout="centered",
     initial_sidebar_state="collapsed",
     menu_items={
-        'Get Help': 'https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2',
-        'Report a bug': "https://www.minimalistinnovation.com/contact",
-        'About': "https://www.minimalistinnovation.com/about"
+        'Get Help': 'https://outlook.office.com/book/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/s/n2ZGHb7DjEq3KeWVxeM4Aw2?ismsaljsauthenabled',
+        'Report a bug': "https://www.minimalistinnovation.co/contact",
+        'About': "https://www.minimalistinnovation.co/about"
     }
 )
 

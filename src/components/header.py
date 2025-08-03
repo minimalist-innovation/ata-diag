@@ -8,14 +8,14 @@ def add_toolbar():
     # Create a placeholder for the toolbar
     toolbar_placeholder = st.empty()
 
-    button_text = "Find Hidden Profit Leaks 🔍 [Claim Your Free Review]"
+    button_text = "Schedule Your Quick Win Call"
     if st.session_state.get("current_page", None) == "report_page.py":
-        button_text = "Solve Hidden Profit Leaks → [Claim Your Fix Plan] 🔧"
+        button_text = "Yes, I Want to Fix Performance → Book Now"
 
     app_toolbar_html = f"""
         <div class="sticky-header">
             <div class="top-toolbar">
-                <a href="https://outlook.office.com/owa/calendar/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/bookings/s/H_o18Z1ej0OAvMiMMMyhTA2" 
+                <a href="https://outlook.office.com/book/MinimalistInnovationLLC@minimalistinnovation.onmicrosoft.com/s/n2ZGHb7DjEq3KeWVxeM4Aw2?ismsaljsauthenabled" 
                     class="toolbar-cta" 
                     target="_blank">
                     <span class="cta-text">{button_text}</span>
@@ -43,11 +43,11 @@ def add_logo(primary_color):
             <div class="app-logo-desktop-left">
                 <div style="background-color: {primary_color}; width: 40px; height: 40px; border-radius: 8px; 
                           display: flex; justify-content: center; align-items: center; margin-right: 12px;">
-                    <span style="color: white; font-weight: bold; font-size: 18px;">ATA</span>
+                    <span style="color: white; font-weight: bold; font-style: italic; font-size: 18px;">STEP</span>
                 </div>
                 <div>
-                    <h2 style="margin: 0; padding: 0; color: {primary_color};">Adaptive Traction Architecture</h2>
-                    <h3 style="margin: 0; padding: 0; color: {primary_color};"> Diagnostics</h3>
+                    <h2 style="margin: 0; padding: 0; color: {primary_color};">Systems. Teams. Execution. Performance.</h2>
+                    <h3 style="margin: 0; padding: 0; color: {primary_color};">Business Performance</h3>
                 </div>
             </div>
             """
