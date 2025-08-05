@@ -77,8 +77,8 @@ def add_logo(primary_color):
                 <span style="color: white; font-weight: bold; font-size: 18px;">ATA</span>
             </div>
             <div>
-                <h2 style="margin: 0; padding: 0; color: {primary_color};">Adaptive Traction Architecture</h2>
-                <h3 style="margin: 0; padding: 0; color: {primary_color};"> Diagnostics</h3>
+                <h2 style="margin: 0; padding: 0; color: {primary_color};">Systems. Teams. Execution. Performance.</h2>
+                <h3 style="margin: 0; padding: 0; color: {primary_color};">Business Performance</h3>
             </div>
         </div>
         """
